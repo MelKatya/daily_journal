@@ -9,7 +9,7 @@ def create_users_table():
                 id INT PRIMARY KEY,
                 name VARCHAR(20),
                 email VARCHAR(30),
-                password varchar(80),
+                hashed_password varchar(80),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
             )
             """
