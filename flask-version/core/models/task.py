@@ -6,7 +6,7 @@ def create_tasks_table():
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS tasks (
-                id INT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 id_users INT references users(id),
                 name VARCHAR(30),
                 describe TEXT,

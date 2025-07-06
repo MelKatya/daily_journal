@@ -6,7 +6,7 @@ def create_users_table():
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
-                id INT PRIMARY KEY,
+                id SERIAL PRIMARY KEY,
                 name VARCHAR(20),
                 email VARCHAR(30),
                 hashed_password varchar(80),
