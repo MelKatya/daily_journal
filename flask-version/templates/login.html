@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% from "_formhelpers.html" import render_field %}
+<form method=post>
+  <dl>
+    {{ render_field(form.name) }}
+    {{ render_field(form.password) }}
+  </dl>
+  <p><input type=submit value=Login>
+</form>
+</body>
+</html>
