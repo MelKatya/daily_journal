@@ -16,6 +16,7 @@ def get_password_hash(password):
 
 
 def add_new_user(name: str, email: str, password: str):
+    """Добавляет нового пользователя"""
     hashed_password = get_password_hash(password)
 
     with db.connect() as cur:
@@ -26,3 +27,28 @@ def add_new_user(name: str, email: str, password: str):
             """,
             (name, email, hashed_password),
         )
+
+
+def check_user_exists(name: str, password: str):
+    """Проверяет, что пользователь указанным именем и паролем существует"""
+
+    with db.connect() as cur:
+        cur.execute(
+            """
+            SELECT hashed_password, id
+            FROM users 
+            WHERE name = %s
+            """, (name,)
+        )
+        user_data = cur.fetchone()
+
+        if not user_data:
+            return False
+
+        hashed_password, user_id = user_data
+        if not verify_password(password, hashed_password):
+            return False
+
+        return user_id
+
+
