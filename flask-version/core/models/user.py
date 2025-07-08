@@ -2,6 +2,7 @@ from .base import db
 
 
 def create_users_table():
+    """Создает таблицу пользователей"""
     with db.connect() as cur:
         cur.execute(
             """
