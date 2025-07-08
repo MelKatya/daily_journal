@@ -1,4 +1,6 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template, session
+
+from api.utils import check_user_login
 from core.schemas.user import RegistrationForm, LoginForm
 
 from crud.user import add_new_user, check_user_exists
@@ -33,13 +35,12 @@ def login_user():
 
 
 @app_route.route("/logout")
+@check_user_login
 def logout_user():
     """Удаляет пользователя из сеанса"""
-    if "user_id" in session:
-        session.pop('user_id')
-        name = session.get('name')
-        session.pop('name')
-        return f"Bye {name}"
-    else:
-        return "Wrong name or password"
+    name = session.get('name')
+    session.pop('user_id')
+    session.pop('name')
+    return f"Bye {name}"
+
 
