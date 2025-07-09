@@ -43,3 +43,37 @@ def get_task_by_id(user_id: int, task_id: int):
         return task_dict
 
 
+def complete_task_by_id(user_id: int, task_id: int):
+    """Помечает задачу выполненной"""
+    with db.connect_return_dict() as cur:
+        cur.execute(
+            """
+            UPDATE tasks
+            set completed = true, completed_at = CURRENT_TIMESTAMP
+            where id_users = %s and id = %s and completed = false
+            RETURNING *
+            """,
+            (user_id, task_id),
+        )
+        result_execute = cur.fetchone()
+        if not result_execute:
+            return
+        task_dict = dict(result_execute)
+        return task_dict
+
+
+def delete_task_by_id(user_id: int, task_id: int):
+    """Удаляет задачу"""
+    with db.connect() as cur:
+        cur.execute(
+            """
+            DELETE task
+            where id_users = %s and id = %s
+            RETURNING *
+            """,
+            (user_id, task_id),
+        )
+        result_execute = cur.fetchone()
+        print(result_execute)
+        return result_execute
+
