@@ -11,3 +11,19 @@ def create_task(id_users: int, name: str, describe: str):
             """,
             (id_users, name, describe),
         )
+
+
+def get_all_tasks(user_id):
+    """Выводит информацию обо всех задачах авторизованного пользователя"""
+    with db.connect_return_dict() as cur:
+        cur.execute(
+            """
+            SELECT * FROM tasks
+            where id_users = %s
+            """, (user_id,)
+        )
+        all_tasks = cur.fetchall()
+        all_tasks_dict = [dict(row) for row in all_tasks]
+        return all_tasks_dict
+
+
