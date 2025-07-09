@@ -2,6 +2,7 @@ from contextlib import contextmanager
 
 import psycopg2
 from psycopg2 import pool
+from psycopg2.extras import RealDictCursor
 
 from core.config import settings
 
@@ -21,6 +22,20 @@ class Database:
     def connect(self):
         connection = self.postgresql_pool.getconn()
         cursor = connection.cursor()
+        try:
+            yield cursor
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            raise
+        finally:
+            cursor.close()
+            self.postgresql_pool.putconn(connection)
+
+    @contextmanager
+    def connect_return_dict(self):
+        connection = self.postgresql_pool.getconn()
+        cursor = connection.cursor(cursor_factory=RealDictCursor)
         try:
             yield cursor
             connection.commit()
