@@ -28,7 +28,7 @@ def get_all_tasks(user_id: int):
 
 
 def get_task_by_id(user_id: int, task_id: int):
-    """Выводит информацию обо всех задачах авторизованного пользователя"""
+    """Выводит информацию о задаче по id авторизованного пользователя"""
     with db.connect_return_dict() as cur:
         cur.execute(
             """
@@ -67,13 +67,13 @@ def delete_task_by_id(user_id: int, task_id: int):
     with db.connect() as cur:
         cur.execute(
             """
-            DELETE task
+            DELETE FROM tasks
             where id_users = %s and id = %s
-            RETURNING *
+            RETURNING name
             """,
             (user_id, task_id),
         )
         result_execute = cur.fetchone()
-        print(result_execute)
         return result_execute
+
 

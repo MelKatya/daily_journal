@@ -51,3 +51,14 @@ def complete_task_by_id(task_id: int):
         return jsonify(message=f"Task with id={task_id} already completed")
     return task
 
+
+@app_route.route("/tasks/<int:task_id>/delete", methods=["GET"])
+@check_user_login
+def delete_task_by_id(task_id: int):
+    """Удаляет задачу"""
+    task = tsk.get_task_by_id(user_id=session.get("user_id"), task_id=task_id)
+    if not task:
+        return jsonify(message=f"Task with id={task_id} not found"), 404
+
+    task = tsk.delete_task_by_id(user_id=session.get("user_id"), task_id=task_id)
+    return jsonify(message=f"Task {task[0]} deleted")
