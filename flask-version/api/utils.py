@@ -1,4 +1,4 @@
-from flask import Blueprint, request, flash, redirect, url_for, render_template, session
+from flask import session, redirect, url_for
 
 from functools import wraps
 
@@ -10,6 +10,6 @@ def check_user_login(func):
             resul_func = func(*args, **kwargs)
             return resul_func
         else:
-            return "You aren't login"
+            return redirect(url_for("app.user.login_user"))
 
     return wrapper
