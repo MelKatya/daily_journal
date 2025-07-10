@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for
 
 from core.config import settings
 from core.models import create_tasks_table, create_users_table
@@ -20,7 +20,7 @@ with app.app_context():
 
 @app.route("/")
 def home_page():
-    return "home"
+    return redirect(url_for('app.user.login_user'))
 
 
 if __name__ == "__main__":
