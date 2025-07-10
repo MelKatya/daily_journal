@@ -25,7 +25,7 @@ def create_task_route():
 def show_all_tasks():
     """Выводит все задачи текущего пользователя"""
     tasks = tsk.get_all_tasks(user_id=session.get("user_id"))
-    return tasks
+    return render_template("tasks.html", tasks=tasks)
 
 
 @app_route.route("/tasks/<int:task_id>", methods=["GET"])
