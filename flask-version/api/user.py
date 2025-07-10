@@ -22,13 +22,17 @@ def registers_new_user():
 @app_route.route("/login", methods=["GET", "POST"])
 def login_user():
     """Аутентифицирует пользователя"""
+
+    if session.get('user_id') is not None:
+        return redirect(url_for("app.user.user_page"))
+
     form = LoginForm(request.form)
     if request.method == "POST" and form.validate():
         name, password = form.name.data, form.password.data
         if user_id := check_user_exists(name, password):
             session['user_id'] = user_id
             session['name'] = name
-            return f"welcome {name}"
+            return redirect(url_for("app.user.user_page"))
         else:
             return "Wrong name or password"
     return render_template("login.html", form=form)
