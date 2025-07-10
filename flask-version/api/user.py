@@ -44,3 +44,9 @@ def logout_user():
     return f"Bye {name}"
 
 
+@app_route.route("/users/home")
+@check_user_login
+def user_page():
+    """Загружает домашнюю страницу пользователя"""
+    name = session.get('name')
+    return render_template("user_page.html", name=name)
