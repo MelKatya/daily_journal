@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+        <table>
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Дата создания</th>
+                    <th>Завершена</th>
+                    <th>Дата завершения</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for task in tasks %}
+                <tr>
+                    <td>
+                        {{ task.id }}
+                    </td>
+                    <td>
+                        {{ task.name }}
+                    </td>
+                    <td>
+                        {{ task.describe }}
+                    </td>
+                    <td>
+                        {{ task.created_at }}
+                    </td>
+                    <td>
+                        {{ task.completed }}
+                    </td>
+                    <td>
+                        {{ task.completed_at }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+</body>
+</html>
