@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily journal</title>
+</head>
+<body>
+    <H1>Привет {{ name }}</H1>
+    <form action="/tasks" method="get" enctype="multipart/form-data">
+        <input type="submit" value="Посмотреть все задачи"/>
+    </form>
+    <form action="/tasks/create" method="get" enctype="multipart/form-data">
+        <input type="submit" value="Создать новую задачу"/>
+    </form>
+    <form action="/logout" method="get" enctype="multipart/form-data">
+        <input type="submit" value="Выйти"/>
+    </form>
+
+</body>
+</html>
