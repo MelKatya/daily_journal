@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Daily journal</title>
 </head>
 <body>
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.name) }}
-    {{ render_field(form.password) }}
-  </dl>
-  <p><input type=submit value=Login>
-</form>
+        <h1>Ежедневник</h1>
+        <p>Загрузите текстовый файл (.txt), чтобы увидеть, какие слова в нём самые значимые.</p>
+
+        <fieldset>
+
+            <legend>Авторизация</legend>
+            <form action="/login" method="post" enctype="multipart/form-data">
+                {% from "_formhelpers.html" import render_field %}
+                <form method=post>
+                  <dl>
+                    {{ render_field(form.name) }}
+                    {{ render_field(form.password) }}
+                  </dl>
+                  <p><input type="submit" value="Войти"/>
+                </form>
+                </form>
+
+        </fieldset>
+                <form action="/registration" method="get" enctype="multipart/form-data">
+                <input type="submit" value="Регистрация"/>
+                </form>
+
 </body>
 </html>
