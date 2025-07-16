@@ -2,19 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
 </head>
 <body>
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.name) }}
-    {{ render_field(form.email) }}
-    {{ render_field(form.password) }}
-    {{ render_field(form.confirm) }}
-  </dl>
-  <p><input type=submit value=Register>
-</form>
-</form>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+        <br />
+        <div class="gg ">
+            <fieldset class="fieldset">
+                <legend>Регистрация</legend>
+                {% from "_formhelpers.html" import render_field %}
+                <form method=post>
+                  <dl>
+                    {{ render_field(form.name) }}
+                      <dt>Email:</dt>
+                    <dd> <input type="email" name="email"/> </dd>
+                    {{ render_field(form.password) }}
+                    {{ render_field(form.confirm) }}
+                  </dl>
+                    <div class="submit-row">
+                        <input type=submit value=Регистрация>
+                        <button type="button" onclick="window.location.href='/login'">Отмена</button>
+                    </div>
+                 </form>
+            </fieldset>
+            <br />
+        </div>
+    </div>
 </body>
 </html>
