@@ -3,29 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
 </head>
 <body>
-        <h1>Ежедневник</h1>
-        <p>Загрузите текстовый файл (.txt), чтобы увидеть, какие слова в нём самые значимые.</p>
+<div class="header">
+      <h1>Ежедневник</h1>
+</div>
 
-        <fieldset>
+<div class="container">
+    <p class="hint">Добро пожаловать! Войдите в свой аккаунт или зарегистрируйтесь, чтобы начать вести задачи.</p>
+<div class="gg ">
+    <fieldset class="fieldset">
+        <legend>Авторизация</legend>
 
-            <legend>Авторизация</legend>
-            <form action="/login" method="post" enctype="multipart/form-data">
-                {% from "_formhelpers.html" import render_field %}
-                <form method=post>
-                  <dl>
-                    {{ render_field(form.name) }}
-                    {{ render_field(form.password) }}
-                  </dl>
-                  <p><input type="submit" value="Войти"/>
-                </form>
-                </form>
+        <form action="/login" method="post" enctype="multipart/form-data">
+            {% from "_formhelpers.html" import render_field %}
+            <dl>
+                {{ render_field(form.name) }}
+                <br />
+                {{ render_field(form.password) }}
+            </dl>
+            <div class="submit">
+                <input type="submit" value="Войти"/>
+            </div>
+        </form>
+    </fieldset>
 
-        </fieldset>
-                <form action="/registration" method="get" enctype="multipart/form-data">
+            <div class="register">
+            <form action="/registration" method="get">
                 <input type="submit" value="Регистрация"/>
-                </form>
-
+            </form>
+        </div>
+    </div>
+</div>
 </body>
 </html>
