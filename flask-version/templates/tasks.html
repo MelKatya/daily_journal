@@ -2,10 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
 </head>
 <body>
-        <table>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+        <table class="customTable">
             <thead>
                 <tr>
                     <th>Номер</th>
@@ -20,8 +25,9 @@
             <tbody>
             {% for task in tasks %}
                 <tr>
+                    <a href="../tasks/{{ task.id }}"></a>
                     <td>
-                        {{ task.id }}
+                        <a href="../tasks/{{ task.id }}">{{ task.id }} </a>
                     </td>
                     <td>
                         {{ task.name }}
@@ -39,8 +45,10 @@
                         {{ task.completed_at }}
                     </td>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                {% endfor %}
+                </tbody>
+            </table>
+        <button onclick="window.location.href='/users/home'"> Назад</button>
+        </div>
 </body>
 </html>
