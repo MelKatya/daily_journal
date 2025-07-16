@@ -2,21 +2,21 @@ from wtforms import Form, StringField, IntegerField, validators, PasswordField
 
 
 class RegistrationForm(Form):
-    name = StringField("name", [validators.Length(min=4, max=25)])
-    email = StringField("Email Address", [validators.Length(min=6, max=35)])
+    name = StringField("Имя", [validators.Length(min=4, max=25)])
+    email = StringField("Email", [validators.Length(min=6, max=35)])
     password = PasswordField(
-        "New Password",
+        "Пароль",
         [
             validators.DataRequired(),
-            validators.EqualTo("confirm", message="Passwords must match"),
+            validators.EqualTo("confirm", message="Пароли не совпадают"),
         ],
     )
-    confirm = PasswordField("Repeat Password")
+    confirm = PasswordField("Повтор пароля")
 
 
 class LoginForm(Form):
-    name = StringField("name", [validators.Length(min=4, max=25)])
-    password = PasswordField("Password")
+    name = StringField("Имя", [validators.Length(min=4, max=25)])
+    password = PasswordField("Пароль")
 
 
 
