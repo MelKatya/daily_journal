@@ -1,17 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
 </head>
 <body>
-{% from "_formhelpers.html" import render_field %}
-<form method=post>
-  <dl>
-    {{ render_field(form.name) }}
-    {{ render_field(form.describe) }}
-  </dl>
-  <p><input type=submit value=CreateTask>
-</form>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+        <div class="gg ">
+            <fieldset class="fieldset">
+                <legend>Новая задача</legend>
+                {% from "_formhelpers.html" import render_field %}
+                <form method=post>
+                  <dl>
+                    {{ render_field(form.name) }}
+                      <dt>Описание:</dt>
+                    <dd> <textarea class="describe" name="describe" rows="5" placeholder="Введите описание задачи..."></textarea></dd>
+                  </dl>
+                    <div class="submit-row">
+                        <input type=submit value="Создать задачу">
+                        <button type="button" onclick="window.location.href='/users/home'">Отмена</button>
+                    </div>
+                </form>
+            </fieldset>
+        </div>
+        <br />
+    </div>
 </body>
 </html>
