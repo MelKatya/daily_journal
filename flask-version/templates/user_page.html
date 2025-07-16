@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
 </head>
 <body>
-    <H1>Привет {{ name }}</H1>
-    <form action="/tasks" method="get" enctype="multipart/form-data">
-        <input type="submit" value="Посмотреть все задачи"/>
-    </form>
-    <form action="/tasks/create" method="get" enctype="multipart/form-data">
-        <input type="submit" value="Создать новую задачу"/>
-    </form>
-    <form action="/logout" method="get" enctype="multipart/form-data">
-        <input type="submit" value="Выйти"/>
-    </form>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
 
+        <h2 class="welcome">Привет, {{ name }}!</h2>
+        <p class="hint">Выберите действие ниже, чтобы управлять своими задачами:</p>
+
+        <div class="main-page">
+            <button class="main-btn" onclick="window.location.href='/tasks'"> Все задачи</button>
+            <button class="main-btn" onclick="window.location.href='/tasks/create'"> Новая задача</button>
+            <button class="main-btn logout" onclick="window.location.href='/logout'"> Выйти</button>
+        </div>
+        <br />
+        </div>
+    </div>
 </body>
 </html>
