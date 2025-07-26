@@ -2,6 +2,7 @@ from flask import Blueprint, request, flash, redirect, url_for, render_template,
 
 from api.utils import check_user_login
 from core.schemas.task import CreateTaskForm
+from core.config import settings
 
 from crud import task as tsk
 
@@ -20,12 +21,33 @@ def create_task_route():
     return render_template("create_task.html", form=form)
 
 
-@app_route.route("/tasks", methods=["GET"])
+@app_route.route("/tasks", methods=["GET", "POST"])
 @check_user_login
 def show_all_tasks():
-    """Выводит все задачи текущего пользователя"""
-    tasks = tsk.get_all_tasks(user_id=session.get("user_id"))
-    return render_template("tasks.html", tasks=tasks)
+    """Выводит все задачи текущего пользователя. Сортирует, фильтрует их и выполняет поиск"""
+    sort_option = request.args.get(settings.tasks.SORTED.name, settings.tasks.SORTED.default_html)
+    sorted_for_db = settings.tasks.SORTED.db_map.get(sort_option, settings.tasks.SORTED.default_db)
+
+    filter_option = request.args.get(settings.tasks.FILTER.name, settings.tasks.FILTER.default_html)
+    filter_for_db = settings.tasks.FILTER.db_map.get(filter_option, settings.tasks.FILTER.default_db)
+
+    search_query = request.args.get(settings.tasks.SEARCH.name, settings.tasks.SEARCH.default_db)
+
+    tasks = tsk.get_all_tasks(
+        user_id=session.get("user_id"),
+        sorted_for_db=sorted_for_db,
+        completed=filter_for_db,
+        search_query=search_query
+    )
+
+    return render_template(
+        "tasks.html",
+        tasks=tasks,
+        html_param=settings.tasks,
+        sort_option=sort_option,
+        filter_option=filter_option,
+        search_query=search_query
+    )
 
 
 @app_route.route("/tasks/<int:task_id>", methods=["GET"])
