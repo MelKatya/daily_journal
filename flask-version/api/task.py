@@ -16,7 +16,7 @@ def create_task_route():
     if request.method == "POST" and form.validate():
         name, describe = form.name.data, form.describe.data
         tsk.create_task(session.get("user_id"), name, describe)
-        return f"{name}, {describe}"
+        return redirect(url_for("app.user.user_page"))
     return render_template("create_task.html", form=form)
 
 
