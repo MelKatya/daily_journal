@@ -48,26 +48,13 @@
 
             <tbody>
             {% for task in tasks %}
-                <tr>
-                    <a href="../tasks/{{ task.id }}"></a>
-                    <td>
-                        <a href="../tasks/{{ task.id }}">{{ task.id }} </a>
-                    </td>
-                    <td>
-                        {{ task.name }}
-                    </td>
-                    <td>
-                        {{ task.describe }}
-                    </td>
-                    <td>
-                        {{ task.created_at }}
-                    </td>
-                    <td>
-                        {{ task.completed }}
-                    </td>
-                    <td>
-                        {{ task.completed_at }}
-                    </td>
+                <tr  onclick="window.location.href='/tasks/{{ task.id }}'" style="cursor: pointer;">
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.describe }}</td>
+                    <td>{{ task.created_at }}</td>
+                    <td>{{ task.completed }}</td>
+                    <td>{{ task.completed_at }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
