@@ -13,14 +13,18 @@ def create_task(id_users: int, name: str, describe: str):
         )
 
 
-def get_all_tasks(user_id: int):
+def get_all_tasks(user_id: int, sorted_for_db: str, completed: tuple[str], search_query: str):
     """Выводит информацию обо всех задачах авторизованного пользователя"""
+    search_query = f"%{search_query}%"
     with db.connect_return_dict() as cur:
         cur.execute(
-            """
+            f"""
             SELECT * FROM tasks
-            where id_users = %s
-            """, (user_id,)
+            WHERE id_users = %s 
+                AND completed in %s
+                AND name ILIKE %s
+            ORDER BY {sorted_for_db}
+            """, (user_id, completed, search_query)
         )
         all_tasks = cur.fetchall()
         all_tasks_dict = [dict(row) for row in all_tasks]
