@@ -45,7 +45,7 @@ def logout_user():
     name = session.get('name')
     session.pop('user_id')
     session.pop('name')
-    return f"Bye {name}"
+    return redirect(url_for("app.user.login_user"))
 
 
 @app_route.route("/users/home")
