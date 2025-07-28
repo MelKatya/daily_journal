@@ -10,30 +10,38 @@
           <h1>Ежедневник</h1>
     </div>
     <div class="container">
-        <div>
-            <form action="/tasks" method="get" >
+        <div class="toolbar">
+            <div class="filter-group">
+                <div class="filter">
+                    <label>Фильтровать:</label>
+                    <div class="filter-options">
+                        {% for key, value in html_param.FILTER.html_map.items() %}
+                            <label class="radio-label">
+                                <input type="radio" name="{{ html_param.FILTER.name }}" value="{{ key }}"
+                                       onchange="this.form.submit()"
+                                       {% if filter_option == key %}checked{% endif %}>
+                                {{ value }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
 
-                <label>Сортировать:</label>
-                <select name={{ html_param.SORTED.name }} onchange="this.form.submit()">
-                    {% for key, value in html_param.SORTED.html_map.items()  %}
-                        <option value={{ key }} {% if sort_option==key %} selected{% endif %}>{{  value }}</option>
-                    {% endfor %}
-                </select>
+                <div class="filter">
+                    <label>Сортировать:</label>
+                    <select name="{{ html_param.SORTED.name }}" onchange="this.form.submit()">
+                        {% for key, value in html_param.SORTED.html_map.items() %}
+                            <option value="{{ key }}" {% if sort_option==key %} selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
 
-                <label>Фильтровать:</label>
-                {% for key, value in html_param.FILTER.html_map.items()  %}
-                    <input type="radio" name={{ html_param.FILTER.name }} onchange="this.form.submit()" value={{ key }} {% if filter_option==key %}checked{% endif %}/> {{  value }}
-                {% endfor %}
-
-                <label>Поиск:</label>
-                <input type="search" name={{ html_param.SEARCH.name }} value="{{ search_query or '' }}" placeholder="Введите название задачи..."/>
+            <div class="search">
+                <input type="search" name="{{ html_param.SEARCH.name }}" value="{{ search_query or '' }}" placeholder="Введите название задачи..." />
                 <input type="submit" value="Искать">
-
-            </form>
-            <form action="/tasks" method="get" >
-
-            </form>
+            </div>
         </div>
+
         <table class="customTable">
             <thead>
                 <tr>
