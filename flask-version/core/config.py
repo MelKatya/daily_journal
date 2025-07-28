@@ -13,6 +13,11 @@ class DatabaseConfig:
     host = os.getenv("HOST")
 
 
+class UserAuth:
+    user_id: str = "user_id"
+    name: str = "name"
+
+
 @dataclass
 class ParamConfig:
     name: str
@@ -65,6 +70,7 @@ class AllTaskParams:
 
 class Settings:
     db: DatabaseConfig = DatabaseConfig()
+    users_data: UserAuth = UserAuth()
     secret_key: str = os.getenv("SESSION_KEY")
     tasks: AllTaskParams = AllTaskParams()
 
