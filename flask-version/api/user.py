@@ -1,7 +1,8 @@
-from flask import Blueprint, request, flash, redirect, url_for, render_template, session
+from flask import Blueprint, request, redirect, url_for, render_template, session
 
 from api.utils import check_user_login
 from core.schemas.user import RegistrationForm, LoginForm
+from core.config import settings
 
 from crud.user import add_new_user, check_user_exists
 
@@ -30,8 +31,8 @@ def login_user():
     if request.method == "POST" and form.validate():
         name, password = form.name.data, form.password.data
         if user_id := check_user_exists(name, password):
-            session['user_id'] = user_id
-            session['name'] = name
+            session[settings.users_data.user_id] = user_id
+            session[settings.users_data.name] = name
             return redirect(url_for("app.user.user_page"))
         else:
             return "Wrong name or password"
@@ -42,9 +43,9 @@ def login_user():
 @check_user_login
 def logout_user():
     """Удаляет пользователя из сеанса"""
-    name = session.get('name')
-    session.pop('user_id')
-    session.pop('name')
+    name = session.get(settings.users_data.name)
+    session.pop(settings.users_data.user_id)
+    session.pop(settings.users_data.name)
     return redirect(url_for("app.user.login_user"))
 
 
@@ -52,5 +53,5 @@ def logout_user():
 @check_user_login
 def user_page():
     """Загружает домашнюю страницу пользователя"""
-    name = session.get('name')
+    name = session.get(settings.users_data.name)
     return render_template("user_page.html", name=name)
