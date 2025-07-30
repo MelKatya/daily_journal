@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, url_for, render_template, session, jsonify
 
 from api.utils import check_user_login
-from core.schemas.task import CreateTaskForm
+from core.schemas.task import CreateTaskForm, ChangeTaskForm
 from core.config import settings
 
 from crud import task as tsk
@@ -50,14 +50,36 @@ def show_all_tasks():
     )
 
 
-@app_route.route("/tasks/<int:task_id>", methods=["GET"])
+@app_route.route("/tasks/<int:task_id>", methods=["GET", "POST"])
 @check_user_login
 def show_task_by_id(task_id: int):
-    """Выводит информацию о задаче по id"""
+    """Выводит информацию о задаче по id, позволяет ее изменять"""
     task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     if not task:
         return jsonify(message=f"Task with id={task_id} not found"), 404
-    return task
+
+    form = ChangeTaskForm(request.form)
+    edit_mode = False
+    if request.method == "POST":
+        if "change" in request.form:
+            edit_mode = True
+        elif "save" in request.form:
+            edit_mode = False
+            user_id = session.get(settings.users_data.user_id)
+            describe = form.describe.data
+            completed = request.form.get("completed")
+
+            if completed == "True":
+                tsk.complete_task_by_id(user_id=user_id, task_id=task_id)
+            else:
+                tsk.not_completed_task_by_id(user_id=user_id, task_id=task_id)
+
+            tsk.change_describe_task_by_id(user_id=user_id, task_id=task_id, describe=describe)
+
+            task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
+            return render_template("task_id.html", task=task, edit_mode=edit_mode)
+
+    return render_template("task_id.html", task=task, edit_mode=edit_mode)
 
 
 @app_route.route("/tasks/<int:task_id>/complete", methods=["GET"])
