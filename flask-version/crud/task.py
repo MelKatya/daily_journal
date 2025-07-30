@@ -85,6 +85,25 @@ def not_completed_task_by_id(user_id: int, task_id: int):
         return task_dict
 
 
+def change_describe_task_by_id(user_id: int, task_id: int, describe: str):
+    """Изменяет описание задачи"""
+    with db.connect_return_dict() as cur:
+        cur.execute(
+            """
+            UPDATE tasks 
+            set describe = %s
+            where id_users = %s and id = %s
+            RETURNING *
+            """,
+            (describe, user_id, task_id),
+        )
+        result_execute = cur.fetchone()
+        if not result_execute:
+            return
+        task_dict = dict(result_execute)
+        return task_dict
+
+
 def delete_task_by_id(user_id: int, task_id: int):
     """Удаляет задачу"""
     with db.connect() as cur:
