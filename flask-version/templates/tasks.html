@@ -10,8 +10,10 @@
           <h1>Ежедневник</h1>
     </div>
     <div class="container">
+        <form action="/tasks" method="get">
         <div class="toolbar">
             <div class="filter-group">
+
                 <div class="filter">
                     <label>Фильтровать:</label>
                     <div class="filter-options">
@@ -41,7 +43,7 @@
                 <input type="submit" value="Искать">
             </div>
         </div>
-
+        </form>
         <table class="customTable">
             <thead>
                 <tr>
@@ -60,9 +62,17 @@
                     <td>{{ task.id }}</td>
                     <td>{{ task.name }}</td>
                     <td>{{ task.describe }}</td>
-                    <td>{{ task.created_at }}</td>
-                    <td>{{ task.completed }}</td>
-                    <td>{{ task.completed_at }}</td>
+                    <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <input type="checkbox"  {% if task.completed == True %} checked {% endif %} disabled>
+                    </td>
+                    <td>
+                        {% if task.completed == True %}
+                        {{ task.completed_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
