@@ -52,9 +52,28 @@ def complete_task_by_id(user_id: int, task_id: int):
     with db.connect_return_dict() as cur:
         cur.execute(
             """
-            UPDATE tasks
-            set completed = true, completed_at = CURRENT_TIMESTAMP
-            where id_users = %s and id = %s and completed = false
+            UPDATE tasks 
+            SET completed = true, completed_at = CURRENT_TIMESTAMP 
+            WHERE id_users = %s and id = %s and completed = false 
+            RETURNING *
+            """,
+            (user_id, task_id),
+        )
+        result_execute = cur.fetchone()
+        if not result_execute:
+            return
+        task_dict = dict(result_execute)
+        return task_dict
+
+
+def not_completed_task_by_id(user_id: int, task_id: int):
+    """Помечает задачу невыполненной"""
+    with db.connect_return_dict() as cur:
+        cur.execute(
+            f"""
+            UPDATE tasks 
+            SET completed = false, completed_at = Null 
+            WHERE id_users = %s and id = %s and completed = true 
             RETURNING *
             """,
             (user_id, task_id),
