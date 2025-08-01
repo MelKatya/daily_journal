@@ -98,17 +98,15 @@ def show_task_by_id(task_id: int):
 
 @app_route.route("/tasks/<int:task_id>/before_delete", methods=["GET", "POST"])
 @check_user_login
-def complete_task_by_id(task_id: int):
-    """Помечает задачу выполненной"""
+def before_delete_task_by_id(task_id: int):
+    """Запрашивает подтверждение пользователя на удаление задачи"""
     task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     if not task:
         return jsonify(message=f"Task with id={task_id} not found"), 404
 
-    task = tsk.complete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
-    if not task:
-        return jsonify(message=f"Task with id={task_id} already completed")
-    return task
+    session[f"allow_delete_{task_id}"] = True
 
+    return render_template("delete_id.html", task=task)
 
 @app_route.route("/tasks/<int:task_id>/delete", methods=["GET"])
 @check_user_login
