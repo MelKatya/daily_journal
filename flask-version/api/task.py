@@ -82,7 +82,21 @@ def show_task_by_id(task_id: int):
     return render_template("task_id.html", task=task, edit_mode=edit_mode)
 
 
-@app_route.route("/tasks/<int:task_id>/complete", methods=["GET"])
+# @app_route.route("/tasks/<int:task_id>/complete", methods=["GET"])
+# @check_user_login
+# def complete_task_by_id(task_id: int):
+#     """Помечает задачу выполненной"""
+#     task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
+#     if not task:
+#         return jsonify(message=f"Task with id={task_id} not found"), 404
+#
+#     task = tsk.complete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
+#     if not task:
+#         return jsonify(message=f"Task with id={task_id} already completed")
+#     return task
+
+
+@app_route.route("/tasks/<int:task_id>/before_delete", methods=["GET", "POST"])
 @check_user_login
 def complete_task_by_id(task_id: int):
     """Помечает задачу выполненной"""
