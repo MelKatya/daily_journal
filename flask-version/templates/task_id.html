@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>Daily journal</title>
@@ -46,7 +46,7 @@
                                 {% else %}
                                 <input type=submit  name="save" value="Сохранить изменения">
                                 {% endif %}
-                                <button onclick="window.location.href='/tasks'">Удалить задачу</button>
+                                <button type="button" onclick="window.location.href='/tasks/{{ task.id }}/before_delete'">Удалить задачу</button>
                             </div>
                 </fieldset>
             </form>
