@@ -108,13 +108,16 @@ def before_delete_task_by_id(task_id: int):
 
     return render_template("delete_id.html", task=task)
 
-@app_route.route("/tasks/<int:task_id>/delete", methods=["GET"])
+
+@app_route.route("/tasks/<int:task_id>/delete", methods=["GET", "POST"])
 @check_user_login
 def delete_task_by_id(task_id: int):
     """Удаляет задачу"""
-    task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
-    if not task:
-        return jsonify(message=f"Task with id={task_id} not found"), 404
+    if not session.pop(f"allow_delete_{task_id}", False):
+        return jsonify(message="Deletion not confirmed"), 403
+
+    tsk.delete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
+    return redirect(url_for("app.task.show_all_tasks"))
 
     task = tsk.delete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     return jsonify(message=f"Task {task[0]} deleted")
