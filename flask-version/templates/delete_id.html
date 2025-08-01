@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+
+<body>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+        <br />
+        <div class="gg ">
+            <fieldset class="fieldset">
+                <legend>Задача: {{ task.name }}</legend>
+                    <p class="hint">Уверены, что хотите удалить задачу {{ task.name }}</p>
+
+                <div>
+                    <button onclick="window.location.href='/tasks/{{ task.id }}/delete'"> Да</button>
+                    <button onclick="window.location.href='/tasks/{{ task.id }}/cancel_delete'"> Нет/отмена</button>
+                </div>
+            </fieldset>
+            <br />
+        </div>
+    </div>
+</body>
+</html>
