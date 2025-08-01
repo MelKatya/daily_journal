@@ -119,5 +119,12 @@ def delete_task_by_id(task_id: int):
     tsk.delete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     return redirect(url_for("app.task.show_all_tasks"))
 
-    task = tsk.delete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
-    return jsonify(message=f"Task {task[0]} deleted")
+
+@app_route.route("/tasks/<int:task_id>/cancel_delete", methods=["GET"])
+@check_user_login
+def cancel_delete_task_by_id(task_id: int):
+    """Отменяет удаление задачи"""
+    if not session.pop(f"allow_delete_{task_id}", False):
+        return jsonify(message="Deletion not confirmed"), 403
+
+    return redirect(url_for("app.task.show_task_by_id", task_id=task_id))
