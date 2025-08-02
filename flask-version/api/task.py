@@ -56,7 +56,11 @@ def show_task_by_id(task_id: int):
     """Выводит информацию о задаче по id, позволяет ее изменять"""
     task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     if not task:
-        return jsonify(message=f"Task with id={task_id} not found"), 404
+        return render_template(
+            "mistakes.html",
+            code=404,
+            message=f"Task with id={task_id} not found",
+        )
 
     form = ChangeTaskForm(request.form)
     edit_mode = False
@@ -102,7 +106,9 @@ def before_delete_task_by_id(task_id: int):
     """Запрашивает подтверждение пользователя на удаление задачи"""
     task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     if not task:
-        return jsonify(message=f"Task with id={task_id} not found"), 404
+        return render_template(
+            "mistakes.html", code=404, message=f"Task with id={task_id} not found"
+        )
 
     session[f"allow_delete_{task_id}"] = True
 
@@ -114,7 +120,9 @@ def before_delete_task_by_id(task_id: int):
 def delete_task_by_id(task_id: int):
     """Удаляет задачу"""
     if not session.pop(f"allow_delete_{task_id}", False):
-        return jsonify(message="Deletion not confirmed"), 403
+        return render_template(
+            "mistakes.html", code=403, message="Deletion not confirmed"
+        )
 
     tsk.delete_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
     return redirect(url_for("app.task.show_all_tasks"))
@@ -125,6 +133,8 @@ def delete_task_by_id(task_id: int):
 def cancel_delete_task_by_id(task_id: int):
     """Отменяет удаление задачи"""
     if not session.pop(f"allow_delete_{task_id}", False):
-        return jsonify(message="Deletion not confirmed"), 403
+        return render_template(
+            "mistakes.html", code=403, message="Deletion not confirmed"
+        )
 
     return redirect(url_for("app.task.show_task_by_id", task_id=task_id))
