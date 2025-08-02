@@ -17,11 +17,11 @@
                 {% from "_formhelpers.html" import render_field %}
                 <form method=post>
                   <dl>
-                    {{ render_field(form.name) }}
+                    {{ render_field(form.name, class="userinput") }}
                       <dt>Email:</dt>
-                    <dd> <input type="email" name="email"/> </dd>
-                    {{ render_field(form.password) }}
-                    {{ render_field(form.confirm) }}
+                    <dd> <input type="email" class="userinput" name="email"/> </dd>
+                    {{ render_field(form.password, class="userinput") }}
+                    {{ render_field(form.confirm, class="userinput") }}
                   </dl>
                     <div class="submit-row">
                         <input type=submit value=Регистрация>
