@@ -16,9 +16,17 @@
                 {% from "_formhelpers.html" import render_field %}
                 <form method=post>
                   <dl>
-                    {{ render_field(form.name) }}
+                    {{ render_field(form.name, class="userinput") }}
                       <dt>Описание:</dt>
                     <dd> <textarea class="describe" name="describe" rows="5" placeholder="Введите описание задачи..."></textarea></dd>
+                        {% if form.describe.errors %}
+                        <ul class="errors">
+                            {% for error in form.describe.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
                   </dl>
                     <div class="submit-row">
                         <input type=submit value="Создать задачу">
