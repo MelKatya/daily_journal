@@ -67,7 +67,7 @@ def show_task_by_id(task_id: int):
     if request.method == "POST":
         if "change" in request.form:
             edit_mode = True
-        elif "save" in request.form:
+        elif "save" in request.form and form.validate():
             edit_mode = False
             user_id = session.get(settings.users_data.user_id)
             describe = form.describe.data
@@ -78,12 +78,18 @@ def show_task_by_id(task_id: int):
             else:
                 tsk.not_completed_task_by_id(user_id=user_id, task_id=task_id)
 
-            tsk.change_describe_task_by_id(user_id=user_id, task_id=task_id, describe=describe)
+            tsk.change_describe_task_by_id(
+                user_id=user_id, task_id=task_id, describe=describe
+            )
 
-            task = tsk.get_task_by_id(user_id=session.get(settings.users_data.user_id), task_id=task_id)
-            return render_template("task_id.html", task=task, edit_mode=edit_mode)
+            task = tsk.get_task_by_id(
+                user_id=session.get(settings.users_data.user_id), task_id=task_id
+            )
+            return render_template(
+                "task_id.html", task=task, edit_mode=edit_mode, form=form
+            )
 
-    return render_template("task_id.html", task=task, edit_mode=edit_mode)
+    return render_template("task_id.html", task=task, edit_mode=edit_mode, form=form)
 
 
 # @app_route.route("/tasks/<int:task_id>/complete", methods=["GET"])
