@@ -14,12 +14,12 @@
         <br />
         <div class="gg ">
             <fieldset class="fieldset">
-                <legend>Задача: {{ task.name }}</legend>
-                    <p class="hint">Уверены, что хотите удалить задачу {{ task.name }}</p>
+                <legend>Задача №{{ task.id }}</legend>
+                    <p class="hint" style="color: black">Уверены, что хотите удалить задачу {{ task.name }}</p>
 
-                <div>
-                    <button onclick="window.location.href='/tasks/{{ task.id }}/delete'"> Да</button>
-                    <button onclick="window.location.href='/tasks/{{ task.id }}/cancel_delete'"> Нет/отмена</button>
+                <div class="submit-row">
+                    <button class="red-btn" onclick="window.location.href='/tasks/{{ task.id }}/delete'"> Да</button>
+                    <button onclick="window.location.href='/tasks/{{ task.id }}/cancel_delete'"> Нет / отмена</button>
                 </div>
             </fieldset>
             <br />
