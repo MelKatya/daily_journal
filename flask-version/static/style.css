@@ -1,5 +1,16 @@
-body{
-background: #dcdcdc;
+body {
+    background: #dcdcdc;
+}
+
+.header {
+    width: 60%;
+    padding: 30px;
+    color: white;
+    background: #1c222a;
+    margin: auto;
+    text-align: center;
+    font-size: 22px;
+    box-shadow: 0 0 10px #777777;
 }
 
 .container {
@@ -7,14 +18,35 @@ background: #dcdcdc;
     padding: 30px;
     margin: 20px auto;
     background: #6a655d;
-    font-size: 18px;
     box-shadow: 0 0 15px #777777;
     }
+
+.gg {
+    width: 35%;
+    margin: auto;
+}
 
 fieldset {
     background: #edb021;
     border: 7px solid #dcdcdc;
     border-radius: 3px;
+}
+
+legend {
+    color: white;
+    padding: 10px 20px;
+    background: #825b00;
+    text-align: left;
+    font-size: 20px;
+    border: 3px solid #dcdcdc;
+    border-radius: 5px;
+}
+
+.hint {
+    text-align: center;
+    color: #f5f5f5;
+    font-size: 20px;
+    margin-bottom: 30px;
 }
 
 input[type="submit"], button {
@@ -23,11 +55,14 @@ input[type="submit"], button {
     background: #1c222a;
     border-radius: 5px;
     border: none;
+    font-size: 16px;
 }
+
 input[type="submit"]:hover, button:hover {
     background-color: #ddd;
     cursor: pointer;
     color: #6a655d;
+    font-weight: bold;
     border: 1px solid #1c222a;
     transition: background 0.5s ease;
 }
@@ -38,13 +73,20 @@ input[type="search"] {
     border-radius: 5px;
 }
 
-legend {
-    color: white;
-    padding: 10px 20px;
-    background: #825b00;
-    text-align: left;
-    border: 3px solid #dcdcdc;
+.userinput {
+    width: 180px;
+    padding: 5px 10px;
     border-radius: 5px;
+}
+
+dt {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+dd {
+    margin-left: 20px;
+    padding-top: 5px;
 }
 
 .submit {
@@ -53,22 +95,10 @@ legend {
     margin: auto;
 }
 
-.header {
-    width: 60%;
-    padding: 30px;
-    color: white;
-    background: #1c222a;
-    margin: auto;
-    text-align: center;
-    box-shadow: 0 0 10px #777777;
-}
-.gg {
-    width: 35%;
-        margin: auto;
-}
 .register {
     margin: 10px auto;
     text-align: right;
+
 }
 
 .submit-row {
@@ -81,14 +111,6 @@ legend {
 .welcome {
     color: #fff;
     text-align: center;
-    margin-bottom: 10px;
-}
-
-.hint {
-    text-align: center;
-    color: #f5f5f5;
-    font-size: 16px;
-    margin-bottom: 30px;
 }
 
 .main-page {
@@ -112,14 +134,17 @@ legend {
 .main-btn:hover {
     background-color: #ddd;
     cursor: pointer;
+    font-weight: bold;
 }
 
-.logout {
+.red-btn {
     background-color: #a94442;
 }
 
-.logout:hover {
+.red-btn:hover {
     background-color: #922d2d;
+    color: #1c222a;
+    font-weight: bold;
 }
 
 .describe {
@@ -129,15 +154,22 @@ legend {
     font-size: 16px;
     padding: 10px;
     box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.ggTable {
+    width: 90%;
+    margin: auto;
 }
 
 table.customTable {
-    width: 90%;
+    width: 100%;
     margin: 30px auto;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
     background-color: #fbeccb;
     font-size: 14px;
+    text-align: center;
 
     td, th {
         padding: 12px 15px;
@@ -148,16 +180,19 @@ table.customTable {
         box-shadow: inset 0px 2px 2px 0px rgba(255, 255, 255, 0.3);
         background-color: #825b00;
         color: white;
-        text-align: left;
         font-size: 16px;
     }
 
     tr:nth-child(even) {
-    background-color: #fcf3de;
+        background-color: #fcf3de;
     }
 
     tr:hover {
-    background-color: #f5d280;
+        background-color: #f5d280;
+    }
+
+    input[type="checkbox"] {
+        transform: scale(1.5);
     }
 }
 
@@ -175,7 +210,7 @@ table.customTable {
     flex-direction: column;
     gap: 15px;
     color: #fff;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .filter-options {
@@ -192,6 +227,7 @@ table.customTable {
     border: none;
     margin-top: 8px;
 }
+
 .radio-label {
     display: flex;
     align-items: right;
@@ -230,6 +266,16 @@ table.customTable {
     cursor: pointer;
 }
 
-.radio input[type="radio"] {
+input[type="radio"] {
     accent-color: #825b00;
+    transform: scale(1.5);
+}
+
+.mistake{
+    width: 80%;
+    text-align: center;
+    margin: 10px auto;
+    background-color:  #f5d280;
+    padding: 15px;
+    border-radius: 8px;
 }
