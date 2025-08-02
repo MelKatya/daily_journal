@@ -16,11 +16,22 @@
                         <legend>Задача: {{ task.name }}</legend>
                           <dl>
                               <dt>Описание:</dt>
-                            <dd> <textarea class="describe" name="describe" rows="5" placeholder="Введите описание задачи..." {% if edit_mode == False %}disabled {% endif %}>{{task.describe}}</textarea></dd>
+                            <dd>
+                                <textarea class="describe" name="describe" rows="5" placeholder="Введите описание задачи..." {% if edit_mode == False %}disabled {% endif %}>{{task.describe }}</textarea>
+                                    {% if form.describe.errors %}
+                                    <ul class="errors">
+                                        {% for error in form.describe.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                            </dd>
                           </dl>
                            <dl>
                               <dt>Дата создания:</dt>
-                            <dd> {{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }} </dd>
+                            <dd> {{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+
+                            </dd>
                           </dl>
                           <dl>
                             <dt>Выполнена: </dt>
@@ -33,12 +44,12 @@
                                 </label>
                             </dd>
                           </dl>
-                        {% if task.completed == True %}
-                          <dl>
-                              <dt>Дата выполнения:</dt>
-                            <dd> {{ task.completed_at.strftime('%Y-%m-%d %H:%M:%S') }} </dd>
-                          </dl>
-                        {% endif %}
+                            {% if task.completed == True %}
+                              <dl>
+                                  <dt>Дата выполнения:</dt>
+                                <dd> {{ task.completed_at.strftime('%Y-%m-%d %H:%M:%S') }} </dd>
+                              </dl>
+                            {% endif %}
 
                             <div class="submit-row">
                                 {% if edit_mode == False %}
@@ -46,13 +57,16 @@
                                 {% else %}
                                 <input type=submit  name="save" value="Сохранить изменения">
                                 {% endif %}
-                                <button type="button" onclick="window.location.href='/tasks/{{ task.id }}/before_delete'">Удалить задачу</button>
+                                <button type="button" class="red-btn" onclick="window.location.href='/tasks/{{ task.id }}/before_delete'">Удалить задачу</button>
                             </div>
                 </fieldset>
             </form>
+            <div class="register">
+            <button onclick="window.location.href='/tasks'"> Назад</button>
+        </div>
         </div>
 
-        <button onclick="window.location.href='/tasks'"> Назад</button>
+
     </div>
 </body>
 </html>
