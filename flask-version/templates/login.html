@@ -12,24 +12,24 @@
 
 <div class="container">
     <p class="hint">Добро пожаловать! Войдите в свой аккаунт или зарегистрируйтесь, чтобы начать вести задачи.</p>
-<div class="gg ">
-    <fieldset class="fieldset">
-        <legend>Авторизация</legend>
+    <div class="gg ">
+        <fieldset class="fieldset">
+            <legend>Авторизация</legend>
 
-        <form action="/login" method="post" enctype="multipart/form-data">
-            {% from "_formhelpers.html" import render_field %}
-            <dl>
-                {{ render_field(form.name) }}
-                <br />
-                {{ render_field(form.password) }}
-            </dl>
-            <div class="submit">
-                <input type="submit" value="Войти"/>
-            </div>
-        </form>
-    </fieldset>
+            <form action="/login" method="post" enctype="multipart/form-data">
+                {% from "_formhelpers.html" import render_field %}
+                <dl>
+                    {{ render_field(form.name, class="userinput") }}
+                    <br />
+                    {{ render_field(form.password, class="userinput") }}
+                </dl>
+                <div class="submit">
+                    <input type="submit" value="Войти"/>
+                </div>
+            </form>
+        </fieldset>
 
-            <div class="register">
+        <div class="register">
             <form action="/registration" method="get">
                 <input type="submit" value="Регистрация"/>
             </form>
