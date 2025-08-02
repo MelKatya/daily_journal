@@ -10,6 +10,7 @@
           <h1>Ежедневник</h1>
     </div>
     <div class="container">
+
         <form action="/tasks" method="get">
         <div class="toolbar">
             <div class="filter-group">
@@ -44,6 +45,7 @@
             </div>
         </div>
         </form>
+        <div class="ggTable " >
         <table class="customTable">
             <thead>
                 <tr>
@@ -77,7 +79,10 @@
                 {% endfor %}
                 </tbody>
             </table>
+        <div class="register">
         <button onclick="window.location.href='/users/home'"> Назад</button>
+        </div>
+        </div>
         </div>
 </body>
 </html>
