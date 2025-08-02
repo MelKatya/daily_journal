@@ -35,7 +35,9 @@ def login_user():
             session[settings.users_data.name] = name
             return redirect(url_for("app.user.user_page"))
         else:
-            return "Wrong name or password"
+            return render_template(
+                "mistakes.html", code=403, message="Wrong name or password"
+            )
     return render_template("login.html", form=form)
 
 
