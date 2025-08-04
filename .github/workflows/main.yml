@@ -32,7 +32,7 @@ jobs:
 
       - name: Run MyPy (flask)
         working-directory: ./flask_version  
-        run: MYPYPATH=. mypy .
+        run: MYPYPATH=flask_version mypy .
 
       - name: Run Black
         run: black --check --diff .
