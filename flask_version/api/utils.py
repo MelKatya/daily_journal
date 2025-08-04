@@ -1,8 +1,9 @@
 from functools import wraps
 from typing import Any, Callable
 
-from core.config import settings
 from flask import redirect, session, url_for
+
+from core.config import settings
 
 
 def check_user_login(func) -> Callable:
