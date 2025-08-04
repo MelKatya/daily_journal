@@ -31,7 +31,8 @@ def check_user_login(func) -> Callable:
             **kwargs: именованные аргументы, передаваемые в исходную функцию.
 
         Returns:
-            Any: результат выполнения исходной функции или редирект на страницу логина.
+            Any: результат выполнения исходной функции или редирект
+            на страницу логина.
         """
         if session.get(settings.users_data.user_id):
             return func(*args, **kwargs)
