@@ -593,6 +593,21 @@ files = [
 ]
 
 [[package]]
+name = "types-wtforms"
+version = "3.2.1.20250602"
+description = "Typing stubs for WTForms"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "types_wtforms-3.2.1.20250602-py3-none-any.whl", hash = "sha256:8290568f0b30959485a9a52484168bc83aff6156b4a32df67bd4e4e4c5b7b967"},
+    {file = "types_wtforms-3.2.1.20250602.tar.gz", hash = "sha256:4e399ce7a05811715c3352afc7d1650156da6ca5b07fda8952e77a88a5f89c1f"},
+]
+
+[package.dependencies]
+MarkupSafe = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "4.14.1"
 description = "Backported and Experimental Type Hints for Python 3.9+"
@@ -643,4 +658,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "4ba299ea02f222f994a3a97aa97daef321e7d26e9a12c23c07d8ce4a61346761"
+content-hash = "ba656e8ed506e23a7d70e71c474e6bbf96a2e3be7e41bf04578679122553ab8f"
