@@ -31,8 +31,8 @@ jobs:
       - name: Clear mypy cache
         run: rm -rf .mypy_cache
 
-      - name: Run MyPy
-        run: PYTHONPATH=flask_version mypy flask_version/.
+      - name: Run MyPy (flask)
+        run: PYTHONPATH=. mypy flask_version/
 
       - name: Run Black
         run: black --check --diff .
