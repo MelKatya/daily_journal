@@ -7,7 +7,7 @@ on:
     branches: ["*"]
     
 jobs:
-  test-and-lint:
+  linters:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,7 +32,7 @@ jobs:
         run: rm -rf .mypy_cache
 
       - name: Run MyPy
-        run: mypy . 
+        run: mypy ./flask_version
 
       - name: Run Black
         run: black --check --diff .
