@@ -5,5 +5,5 @@ __all__ = (
 )
 
 from .base import db
-from .user import create_users_table
 from .task import create_tasks_table
+from .user import create_users_table

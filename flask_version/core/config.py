@@ -13,6 +13,7 @@ class DatabaseConfig:
     host = os.getenv("HOST")
 
 
+@dataclass
 class UserAuth:
     user_id: str = "user_id"
     name: str = "name"
@@ -22,11 +23,12 @@ class UserAuth:
 class ParamConfig:
     name: str
     default_db: str | tuple
-    default_html: str = None
-    db_map: dict[str, str] | dict[str, tuple[str]] = None
-    html_map: dict[str, str] = None
+    default_html: str | None = None
+    db_map: dict[str, str] | dict[str, tuple[str, ...]] | None = None
+    html_map: dict[str, str] | None = None
 
 
+@dataclass
 class AllTaskParams:
     SORTED: ParamConfig = ParamConfig(
         name="sorted",
@@ -36,14 +38,14 @@ class AllTaskParams:
             "up": "created_at",
             "down": "created_at DESC",
             "completed": "completed_at",
-            "name": "name"
+            "name": "name",
         },
         html_map={
             "up": "Сначала старые",
             "down": "Сначала новые",
             "completed": "По дате завершения",
-            "name": "По названию"
-        }
+            "name": "По названию",
+        },
     )
 
     FILTER: ParamConfig = ParamConfig(
@@ -53,27 +55,24 @@ class AllTaskParams:
         db_map={
             "all": ("true", "false"),
             "completed": ("true",),
-            "uncompleted": ("false",)
+            "uncompleted": ("false",),
         },
         html_map={
             "all": "Все",
             "completed": "Только завершенные",
-            "uncompleted": "Только незавершенные"
-        }
+            "uncompleted": "Только незавершенные",
+        },
     )
 
-    SEARCH: ParamConfig = ParamConfig(
-        name="search",
-        default_db=""
-    )
+    SEARCH: ParamConfig = ParamConfig(name="search", default_db="")
 
 
+@dataclass
 class Settings:
     db: DatabaseConfig = DatabaseConfig()
     users_data: UserAuth = UserAuth()
-    secret_key: str = os.getenv("SESSION_KEY")
+    secret_key: str | None = os.getenv("SESSION_KEY")
     tasks: AllTaskParams = AllTaskParams()
 
 
 settings = Settings()
-

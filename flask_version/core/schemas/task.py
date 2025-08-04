@@ -1,4 +1,4 @@
-from wtforms import Form, StringField, IntegerField, validators, PasswordField, BooleanField
+from wtforms import Form, StringField, validators
 
 
 class CreateTaskForm(Form):

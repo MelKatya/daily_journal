@@ -11,8 +11,8 @@ def create_tasks_table():
                 name VARCHAR(30),
                 describe TEXT,
                 completed BOOL DEFAULT false,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
-                completed_at TIMESTAMP 
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP
             )
             """
         )

@@ -1,6 +1,5 @@
 from contextlib import contextmanager
 
-import psycopg2
 from psycopg2 import pool
 from psycopg2.extras import RealDictCursor
 
@@ -9,13 +8,13 @@ from core.config import settings
 
 class Database:
     def __init__(self, user, password, host, database, minconn=1, maxconn=10):
-        self.postgresql_pool = psycopg2.pool.SimpleConnectionPool(
+        self.postgresql_pool = pool.SimpleConnectionPool(
             minconn=minconn,
             maxconn=maxconn,
             user=user,
             password=password,
             host=host,
-            database=database
+            database=database,
         )
 
     @contextmanager
@@ -54,5 +53,5 @@ db = Database(
     user=settings.db.user,
     password=settings.db.password,
     host=settings.db.host,
-    database=settings.db.database
+    database=settings.db.database,
 )

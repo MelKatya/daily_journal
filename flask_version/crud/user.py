@@ -2,8 +2,6 @@ from passlib.context import CryptContext
 
 from core.models import db
 
-from core.config import settings
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -36,9 +34,10 @@ def check_user_exists(name: str, password: str):
         cur.execute(
             """
             SELECT hashed_password, id
-            FROM users 
+            FROM users
             WHERE name = %s
-            """, (name,)
+            """,
+            (name,),
         )
         user_data = cur.fetchone()
 
@@ -50,5 +49,3 @@ def check_user_exists(name: str, password: str):
             return False
 
         return user_id
-
-

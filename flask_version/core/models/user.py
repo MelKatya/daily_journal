@@ -11,7 +11,7 @@ def create_users_table():
                 name VARCHAR(20),
                 email VARCHAR(30),
                 hashed_password varchar(80),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
             """
         )
