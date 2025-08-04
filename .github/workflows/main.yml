@@ -33,7 +33,7 @@ jobs:
       - name: Run MyPy (flask)
         run: |
           cd flask_version
-          mypy .
+          PYTHONPATH=. mypy .
 
       - name: Run Black
         run: black --check --diff .
