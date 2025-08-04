@@ -1,8 +1,7 @@
 from functools import wraps
 
-from flask import redirect, session, url_for
-
 from core.config import settings
+from flask import redirect, session, url_for
 
 
 def check_user_login(func):

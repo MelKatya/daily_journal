@@ -1,3 +1,7 @@
+from api.utils import check_user_login
+from core.config import settings
+from core.schemas.user import LoginForm, RegistrationForm
+from crud.user import add_new_user, check_user_exists
 from flask import (
     Blueprint,
     redirect,
@@ -6,11 +10,6 @@ from flask import (
     session,
     url_for,
 )
-
-from api.utils import check_user_login
-from core.config import settings
-from core.schemas.user import LoginForm, RegistrationForm
-from crud.user import add_new_user, check_user_exists
 
 app_route = Blueprint("user", __name__)
 

@@ -1,3 +1,7 @@
+from api.utils import check_user_login
+from core.config import settings
+from core.schemas.task import ChangeTaskForm, CreateTaskForm
+from crud import task as tsk
 from flask import (
     Blueprint,
     redirect,
@@ -6,11 +10,6 @@ from flask import (
     session,
     url_for,
 )
-
-from api.utils import check_user_login
-from core.config import settings
-from core.schemas.task import ChangeTaskForm, CreateTaskForm
-from crud import task as tsk
 
 app_route = Blueprint("task", __name__)
 
