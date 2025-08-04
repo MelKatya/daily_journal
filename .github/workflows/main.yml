@@ -20,8 +20,7 @@ jobs:
           python-version: 3.10.11
 
       - name: Install base dependencies
-        run: |
-          python -m pip install --upgrade pip
+        run: python -m pip install --upgrade pip
       - name: Install dev tools
         run: |
           pip install poetry
@@ -32,7 +31,9 @@ jobs:
         run: rm -rf .mypy_cache
 
       - name: Run MyPy (flask)
-        run: PYTHONPATH=flask_version mypy flask_version/
+        run: |
+          cd flask_version
+          mypy .
 
       - name: Run Black
         run: black --check --diff .
