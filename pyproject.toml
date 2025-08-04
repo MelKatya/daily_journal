@@ -8,24 +8,33 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "psycopg2 (>=2.9.10,<3.0.0)",
     "python-dotenv (>=1.1.1,<2.0.0)",
-    "flask (>=3.1.1,<4.0.0)",
-    "passlib (>=1.7.4,<2.0.0)",
     "bcrypt (==4.0.1)",
-    "wtforms (>=3.2.1,<4.0.0)",
     "black (>=25.1.0,<26.0.0)",
     "isort (>=6.0.1,<7.0.0)",
     "flake8 (>=7.3.0,<8.0.0)",
     "flake8-bugbear (>=24.12.12,<25.0.0)",
     "flake8-pie (>=0.16.0,<0.17.0)",
     "mypy (>=1.17.1,<2.0.0)",
+]
+
+[project.optional-dependencies]
+flask = [
+    "psycopg2 (>=2.9.10,<3.0.0)",
+    "flask (>=3.1.1,<4.0.0)",
+    "wtforms (>=3.2.1,<4.0.0)",
+    "passlib (>=1.7.4,<2.0.0)",
     "types-psycopg2 (>=2.9.21.20250718,<3.0.0.0)",
     "types-wtforms (>=3.2.1.20250602,<4.0.0.0)",
     "types-passlib (>=1.7.7.20250602,<2.0.0.0)"
 ]
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [
+    { include = "flask_version" },
+    { include = "fastapi_version" }
+]
