@@ -1,12 +1,12 @@
 from flask import (
     Blueprint,
-    Response,
     redirect,
     render_template,
     request,
     session,
     url_for,
 )
+from werkzeug import Response
 
 from api.utils import check_user_login
 from core.config import settings
@@ -34,9 +34,9 @@ def registers_new_user() -> Response | str:
     form = RegistrationForm(request.form)
     if request.method == "POST" and form.validate():
         name, email, password = (
-            form.name.data,
-            form.email.data,
-            form.password.data,
+            str(form.name.data),
+            str(form.email.data),
+            str(form.password.data),
         )
         add_new_user(name, email, password)
         return redirect(url_for("app.user.login_user"))
@@ -62,7 +62,7 @@ def login_user() -> Response | str:
     Returns:
         Response: редирект на страницу пользователя (POST).
         str: HTML-страница с формой авторизации (GET)
-            или с сообщением об ошибке (неудачный POST)..
+            или с сообщением об ошибке (неудачный POST).
     """
 
     if session.get(settings.users_data.user_id) is not None:
@@ -70,7 +70,7 @@ def login_user() -> Response | str:
 
     form = LoginForm(request.form)
     if request.method == "POST" and form.validate():
-        name, password = form.name.data, form.password.data
+        name, password = str(form.name.data), str(form.password.data)
         if user_id := check_user_exists(name, password):
             session[settings.users_data.user_id] = user_id
             session[settings.users_data.name] = name
