@@ -581,6 +581,18 @@ files = [
 ]
 
 [[package]]
+name = "types-passlib"
+version = "1.7.7.20250602"
+description = "Typing stubs for passlib"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "types_passlib-1.7.7.20250602-py3-none-any.whl", hash = "sha256:ed73a91be9a22484ebd62cc0d127675ded542b892b99776db92dab760bbfe274"},
+    {file = "types_passlib-1.7.7.20250602.tar.gz", hash = "sha256:cf2350e78d36b6b09e4db44284d96651b57285f499cfabf111b616065abab7b3"},
+]
+
+[[package]]
 name = "types-psycopg2"
 version = "2.9.21.20250718"
 description = "Typing stubs for psycopg2"
@@ -658,4 +670,4 @@ email = ["email-validator"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "ba656e8ed506e23a7d70e71c474e6bbf96a2e3be7e41bf04578679122553ab8f"
+content-hash = "9f3ad0f160b0986d2e5cdad8941457f455bd6c5f81bfb599cdc8b217589c035d"
