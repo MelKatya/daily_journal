@@ -1,9 +1,10 @@
 import datetime
 
+from flask import Flask, redirect, url_for
+
 from api import app_route
 from core.config import settings
 from core.models import create_tasks_table, create_users_table
-from flask import Flask, redirect, url_for
 
 app = Flask(__name__)
 app.register_blueprint(app_route)
@@ -18,6 +19,9 @@ with app.app_context():
 
 @app.route("/")
 def home_page():
+    """
+    Корневой маршрут: перенаправляет на страницу входа пользователя.
+    """
     return redirect(url_for("app.user.login_user"))
 
 
