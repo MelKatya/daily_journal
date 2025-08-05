@@ -55,9 +55,9 @@ class ParamConfig:
     """
 
     name: str
-    default_db: str | tuple
+    default_db: str | tuple[str, ...]
     default_html: str | None = None
-    db_map: dict[str, str] | dict[str, tuple[str, ...]] | None = None
+    db_map: dict[str, str | tuple[str, ...]] | None = None
     html_map: dict[str, str] | None = None
 
 
