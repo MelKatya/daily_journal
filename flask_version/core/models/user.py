@@ -2,7 +2,9 @@ from .base import db
 
 
 def create_users_table():
-    """Создает таблицу пользователей"""
+    """
+    Создает таблицу 'users' в базе данных, если она не существует.
+    """
     with db.connect() as cur:
         cur.execute(
             """

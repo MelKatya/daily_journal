@@ -2,6 +2,9 @@ from .base import db
 
 
 def create_tasks_table():
+    """
+    Создает таблицу 'tasks' в базе данных, если она не существует.
+    """
     with db.connect() as cur:
         cur.execute(
             """
