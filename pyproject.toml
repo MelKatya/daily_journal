@@ -38,3 +38,14 @@ packages = [
     { include = "flask_version" },
     { include = "fastapi_version" }
 ]
+
+[tool.poetry.extras]
+flask = [
+    "psycopg2",
+    "flask",
+    "wtforms",
+    "passlib",
+    "types-psycopg2",
+    "types-wtforms",
+    "types-passlib"
+]
