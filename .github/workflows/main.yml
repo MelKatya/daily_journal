@@ -31,8 +31,7 @@ jobs:
         run: rm -rf .mypy_cache
 
       - name: Run MyPy (flask)
-        working-directory: ./flask_version  
-        run: MYPYPATH=flask_version mypy .
+        run: mypy .
 
       - name: Run Black
         run: black --check --diff .
