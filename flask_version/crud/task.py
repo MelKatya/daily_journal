@@ -1,8 +1,17 @@
+from typing import Any
+
 from core.models import db
 
 
-def create_task(id_users: int, name: str, describe: str):
-    """Создает новую задачу"""
+def create_task(id_users: int, name: str, describe: str) -> None:
+    """
+    Добавляет новую задачу в таблицу 'tasks'.
+
+    Args:
+        id_users (int): ID пользователя, создающего задачу.
+        name (str): название задачи.
+        describe (str): описание задачи.
+    """
     with db.connect() as cur:
         cur.execute(
             """
@@ -14,9 +23,24 @@ def create_task(id_users: int, name: str, describe: str):
 
 
 def get_all_tasks(
-    user_id: int, sorted_for_db: str, completed: tuple[str], search_query: str
-):
-    """Выводит информацию обо всех задачах авторизованного пользователя"""
+    user_id: int,
+    sorted_for_db: str,
+    completed: tuple[str, ...],
+    search_query: str,
+) -> list[dict]:
+    """
+    Возвращает список отсортированных и отфильтрованных задач.
+    Ищет задачи по названию.
+
+    Args:
+        user_id (int): ID пользователя.
+        sorted_for_db (str): поле для сортировки в SQL-запросе.
+        completed: (tuple[str, ...]): кортеж со статусами задач для фильтрации.
+        search_query (str): поисковая строка (поиск по названию задачи).
+
+    Returns:
+        list[dict]: список задач, удовлетворяющих условиям фильтрации и поиска.
+    """
     search_query = f"%{search_query}%"
     with db.connect_return_dict() as cur:
         cur.execute(
@@ -33,8 +57,18 @@ def get_all_tasks(
         return [dict(row) for row in all_tasks]
 
 
-def get_task_by_id(user_id: int, task_id: int):
-    """Выводит информацию о задаче по id авторизованного пользователя"""
+def get_task_by_id(user_id: int, task_id: int) -> dict[str, Any] | None:
+    """
+    Возвращает информацию о задаче пользователя по их ID.
+
+    Args:
+        user_id (int): ID пользователя.
+        task_id (int): ID задачи.
+
+    Returns:
+        dict[str, Any] | None: словарь с данными задачи, если найдена,
+        иначе None.
+    """
     with db.connect_return_dict() as cur:
         cur.execute(
             """
@@ -45,13 +79,23 @@ def get_task_by_id(user_id: int, task_id: int):
         )
         task = cur.fetchone()
         if not task:
-            return
+            return None
 
         return dict(task)
 
 
-def complete_task_by_id(user_id: int, task_id: int):
-    """Помечает задачу выполненной"""
+def complete_task_by_id(user_id: int, task_id: int) -> dict[str, Any] | None:
+    """
+    Помечает задачу как выполненную и устанавливает дату ее выполнения.
+
+    Args:
+        user_id (int): ID пользователя.
+        task_id (int): ID задачи.
+
+    Returns:
+        dict[str, Any] | None: словарь с обновленными данными задачи,
+        если задача найдена и ее статус был изменен; иначе None.
+    """
     with db.connect_return_dict() as cur:
         cur.execute(
             """
@@ -64,13 +108,26 @@ def complete_task_by_id(user_id: int, task_id: int):
         )
         result_execute = cur.fetchone()
         if not result_execute:
-            return
+            return None
 
         return dict(result_execute)
 
 
-def not_completed_task_by_id(user_id: int, task_id: int):
-    """Помечает задачу невыполненной"""
+def not_completed_task_by_id(
+    user_id: int,
+    task_id: int,
+) -> dict[str, Any] | None:
+    """
+    Помечает задачу как невыполненную и удаляет дату ее выполнения.
+
+    Args:
+        user_id (int): ID пользователя.
+        task_id (int): ID задачи.
+
+    Returns:
+        dict[str, Any] | None: словарь с обновленными данными задачи,
+        если задача найдена и ее статус был изменен; иначе None.
+    """
     with db.connect_return_dict() as cur:
         cur.execute(
             """
@@ -83,7 +140,7 @@ def not_completed_task_by_id(user_id: int, task_id: int):
         )
         result_execute = cur.fetchone()
         if not result_execute:
-            return
+            return None
 
         return dict(result_execute)
 
@@ -91,9 +148,20 @@ def not_completed_task_by_id(user_id: int, task_id: int):
 def change_describe_task_by_id(
     user_id: int,
     task_id: int,
-    describe: str | None,
-):
-    """Изменяет описание задачи"""
+    describe: str,
+) -> dict[str, Any] | None:
+    """
+    Обновляет описание задачи по ее ID для конкретного пользователя.
+
+    Args:
+        user_id (int): ID пользователя.
+        task_id (int): ID задачи.
+        describe (str): описание задачи.
+
+    Returns:
+        dict[str, Any] | None: словарь с обновленными данными задачи,
+        если задача найдена и описание обновлено; иначе None.
+    """
     with db.connect_return_dict() as cur:
         cur.execute(
             """
@@ -106,13 +174,23 @@ def change_describe_task_by_id(
         )
         result_execute = cur.fetchone()
         if not result_execute:
-            return
+            return None
 
         return dict(result_execute)
 
 
-def delete_task_by_id(user_id: int, task_id: int):
-    """Удаляет задачу"""
+def delete_task_by_id(user_id: int, task_id: int) -> str | None:
+    """
+    Удаляет задачу по ее ID для конкретного пользователя.
+
+    Args:
+        user_id (int): ID пользователя.
+        task_id (int): ID задачи.
+
+    Returns:
+        str | None: наименование задачи, если она была найдена и удалена;
+        иначе None.
+    """
     with db.connect() as cur:
         cur.execute(
             """
@@ -123,4 +201,5 @@ def delete_task_by_id(user_id: int, task_id: int):
             (user_id, task_id),
         )
 
-        return cur.fetchone()
+        result = cur.fetchone()
+        return result[0] if result else None
