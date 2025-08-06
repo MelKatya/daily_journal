@@ -15,7 +15,7 @@
         <div class="gg ">
             <fieldset class="fieldset">
                 <legend>Задача №{{ task.id }}</legend>
-                    <p class="hint" style="color: black">Уверены, что хотите удалить задачу {{ task.name }}</p>
+                    <p class="hint" style="color: black">Уверены, что хотите удалить задачу "{{ task.name }}"</p>
 
                 <div class="submit-row">
                     <button class="red-btn" onclick="window.location.href='/tasks/{{ task.id }}/delete'"> Да</button>
