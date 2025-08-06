@@ -10,6 +10,7 @@ class Database:
     """
     Класс для управления пулом соединений с PostgreSQL с помощью psycopg2.
     """
+
     def __init__(self, user, password, host, database, minconn=1, maxconn=10):
         """
         Инициализирует пул соединений к PostgreSQL.

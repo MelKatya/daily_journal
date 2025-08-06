@@ -70,30 +70,31 @@ def show_all_tasks() -> str:
     Returns:
         str: HTML-страница с задачами пользователя.
     """
-    #  Получаем параметр сортировки из URL (например, "up" или "down")
+    # Получаем параметр сортировки из URL (напр., "up" или "down")
     sort_option = request.args.get(
         settings.tasks.SORTED.name, settings.tasks.SORTED.default_html
     )
     assert isinstance(sort_option, str)
-    #  Подставляем соответствующее SQL-значение (например, "created_at DESC")
+    #  Подставляем соответствующее SQL-значение (напр., "created_at DESC")
     assert isinstance(settings.tasks.SORTED.db_map, dict)
     sorted_for_db = settings.tasks.SORTED.db_map.get(
         sort_option, settings.tasks.SORTED.default_db
     )
+    assert isinstance(sorted_for_db, str)
 
-    #  Получаем параметр фильтрации завершенности (например, "completed")
+    # Получаем параметр фильтрации завершенности (напр., "completed")
     filter_option = request.args.get(
         settings.tasks.FILTER.name, settings.tasks.FILTER.default_html
     )
     assert isinstance(filter_option, str)
-    #  Подставляем соответствующее значение для фильтрации в БД (например, ("true",))
+    # Подставляем соответствующее значение для фильтрации в бд (напр., "true")
     assert isinstance(settings.tasks.FILTER.db_map, dict)
     filter_for_db = settings.tasks.FILTER.db_map.get(
         filter_option, settings.tasks.FILTER.default_db
     )
     assert isinstance(filter_for_db, tuple)
 
-    #  Получаем строку для поиска по названию задачи
+    # Получаем строку для поиска по названию задачи
     search_query = request.args.get(
         settings.tasks.SEARCH.name, settings.tasks.SEARCH.default_db
     )
@@ -165,6 +166,7 @@ def show_task_by_id(task_id: int) -> str:
         elif "save" in request.form and form.validate():
             edit_mode = False
             describe = form.describe.data
+            assert isinstance(describe, str)
             completed = request.form.get("completed")
 
             if completed == "True":
