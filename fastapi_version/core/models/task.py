@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import func, ForeignKey, VARCHAR, TEXT
+from sqlalchemy import func, ForeignKey, VARCHAR, TEXT, false
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
@@ -24,7 +24,7 @@ class Task(Base):
     )
     completed: Mapped[bool] = mapped_column(
         default=False,
-        server_default=func.now(),
+        server_default=false(),
     )
     completed_at: Mapped[datetime]
 
