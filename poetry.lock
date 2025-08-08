@@ -1045,7 +1045,7 @@ files = [
 ]
 
 [package.dependencies]
-greenlet = {version = ">=1", markers = "python_version < \"3.14\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")"}
+greenlet = {version = ">=1", optional = true, markers = "python_version < \"3.14\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\") or extra == \"asyncio\""}
 typing-extensions = ">=4.6.0"
 
 [package.extras]
@@ -1266,10 +1266,10 @@ markupsafe = "*"
 email = ["email-validator"]
 
 [extras]
-fastapi = ["alembic", "fastapi", "pydantic", "pydantic-settings", "uvicorn"]
+fastapi = ["alembic", "fastapi", "pydantic", "pydantic-settings", "sqlalchemy", "uvicorn"]
 flask = ["flask", "passlib", "psycopg2", "types-passlib", "types-psycopg2", "types-wtforms", "wtforms"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "e215455581a71995d2d35409036f13a40ed953d596bfe145d6ce1e921dd76982"
+content-hash = "e21612adb526a23189e2b776308a1c4c51492dc02f8dc905cf1feb1ef87499d9"
