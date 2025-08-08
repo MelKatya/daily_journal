@@ -26,6 +26,6 @@ class Task(Base):
         default=False,
         server_default=false(),
     )
-    completed_at: Mapped[datetime]
+    completed_at: Mapped[datetime] = mapped_column(nullable=True)
 
     users: Mapped["User"] = relationship(back_populates="tasks")
