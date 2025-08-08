@@ -680,9 +680,10 @@ markupsafe = "*"
 email = ["email-validator"]
 
 [extras]
+fastapi = []
 flask = ["flask", "passlib", "psycopg2", "types-passlib", "types-psycopg2", "types-wtforms", "wtforms"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "5354cf6d1fdb185ab54e3b9ea99e961c1953ef11b7bd89908aa46101e461df85"
+content-hash = "c92db5143df69a9ccc30f070645d61530f367940b678e6a8908992d49f44bb0b"
