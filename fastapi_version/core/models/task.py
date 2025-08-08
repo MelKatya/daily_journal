@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class Task(Base):
 
-    id_users: Mapped[str] = mapped_column(
+    id_users: Mapped[int] = mapped_column(
         ForeignKey("users.id"),
         nullable=False,
     )
