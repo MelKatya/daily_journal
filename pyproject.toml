@@ -31,6 +31,7 @@ flask = [
 fastapi = [
     "uvicorn (>=0.35.0,<0.36.0)",
     "fastapi (>=0.116.1,<0.117.0)",
+    "alembic (>=1.16.4,<2.0.0)",
 ]
 
 [build-system]
@@ -56,4 +57,5 @@ flask = [
 fastapi = [
     "uvicorn",
     "fastapi",
+    "alembic"
 ]
