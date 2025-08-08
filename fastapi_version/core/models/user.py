@@ -17,6 +17,6 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(VARCHAR(80), nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.now, server_default=func.now())
 
-    # tasks: Mapped[list["Task"]] = relationship(
-    #     back_populates="users", cascade="all, delete-orphan"
-    # )
+    tasks: Mapped[list["Task"]] = relationship(
+        back_populates="users", cascade="all, delete-orphan"
+    )
