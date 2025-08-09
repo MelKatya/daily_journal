@@ -36,6 +36,7 @@ fastapi = [
     "pydantic-settings (>=2.10.1,<3.0.0)",
     "sqlalchemy[asyncio] (>=2.0.42,<3.0.0)",
     "asyncpg (>=0.30.0,<0.31.0)",
+    "pyjwt[crypto] (>=2.10.1,<3.0.0)",
 ]
 
 [build-system]
@@ -66,4 +67,5 @@ fastapi = [
     "pydantic-settings",
     "sqlalchemy",
     "asyncpg",
+    "pyjwt",
 ]
