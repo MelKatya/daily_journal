@@ -920,10 +920,9 @@ files = [
 name = "passlib"
 version = "1.7.4"
 description = "comprehensive password hashing framework supporting over 30 schemes"
-optional = true
+optional = false
 python-versions = "*"
 groups = ["main"]
-markers = "extra == \"flask\""
 files = [
     {file = "passlib-1.7.4-py2.py3-none-any.whl", hash = "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1"},
     {file = "passlib-1.7.4.tar.gz", hash = "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"},
@@ -1525,9 +1524,9 @@ email = ["email-validator"]
 
 [extras]
 fastapi = ["alembic", "asyncpg", "fastapi", "pydantic", "pydantic-settings", "pyjwt", "sqlalchemy", "uvicorn"]
-flask = ["flask", "passlib", "psycopg2", "types-passlib", "types-psycopg2", "types-wtforms", "wtforms"]
+flask = ["flask", "psycopg2", "types-passlib", "types-psycopg2", "types-wtforms", "wtforms"]
 
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10"
-content-hash = "72532a191a212d2e3eb48d0f083c2c82b3f28fd1e90fe7392a968175f3a1a0a8"
+content-hash = "6f2a3ca225fade4ca03d47d6a76fcb52f3de59c803eba821cf5f778e80d1314e"

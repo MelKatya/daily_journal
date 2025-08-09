@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 dependencies = [
     "python-dotenv (>=1.1.1,<2.0.0)",
     "bcrypt (==4.0.1)",
+    "passlib (>=1.7.4,<2.0.0)",
     "black (>=25.1.0,<26.0.0)",
     "isort (>=6.0.1,<7.0.0)",
     "flake8 (>=7.3.0,<8.0.0)",
@@ -23,7 +24,6 @@ flask = [
     "psycopg2 (>=2.9.10,<3.0.0)",
     "flask (>=3.1.1,<4.0.0)",
     "wtforms (>=3.2.1,<4.0.0)",
-    "passlib (>=1.7.4,<2.0.0)",
     "types-psycopg2 (>=2.9.21.20250718,<3.0.0.0)",
     "types-wtforms (>=3.2.1.20250602,<4.0.0.0)",
     "types-passlib (>=1.7.7.20250602,<2.0.0.0)"
@@ -54,7 +54,6 @@ flask = [
     "psycopg2",
     "flask",
     "wtforms",
-    "passlib",
     "types-psycopg2",
     "types-wtforms",
     "types-passlib"
