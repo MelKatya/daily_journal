@@ -13,8 +13,11 @@ class UserCreateRead(UserLogin):
     email: EmailStr
 
 
-class UserCreate(UserBase):
-    email: EmailStr
+class UserHashPass(UserBase):
     hashed_password: str
+
+
+class UserCreate(UserHashPass):
+    email: EmailStr
 
 
