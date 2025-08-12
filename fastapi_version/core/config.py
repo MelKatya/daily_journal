@@ -20,6 +20,12 @@ class DatabaseConfig(BaseSettings):
     max_overflow: int = 10
 
 
+class JwtConfig(BaseModel):
+    secret_key: str
+    algorithm: str
+    access_token_expire: int = 60
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.template"),
@@ -30,6 +36,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
+    jwt_conf: JwtConfig
 
 
 settings = Settings()
