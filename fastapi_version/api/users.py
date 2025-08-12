@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
+from api.utils import check_auth
 from core.models import db_helper
 from core.schemas.users import UserCreate, UserCreateRead, UserLogin
 from crud.user import create_user, check_name_exists
@@ -45,15 +46,18 @@ async def login_user(
     token = create_jwt_token(user.id)
 
     response.set_cookie(key="token", value=token, httponly=True)
-    return user
-
+    return {"user": user, "token": token}
 
 
 @router.post("/logout")
-async def logout_user():
-    ...
+async def logout_user(
+    response: Response,
+    user=Depends(check_auth),
+):
+    response.delete_cookie("token")
+    return f"By, {user.name}"
 
 
 @router.post("/users/home")
-async def user_page():
-    ...
+async def user_page(user=Depends(check_auth)):
+    return user
