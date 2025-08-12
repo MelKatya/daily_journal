@@ -22,10 +22,19 @@ async def check_name_exists(
     session: AsyncSession,
     username: str,
 ):
-    """Проверяет существование имени пользователя"""
+    """
+    Проверяет существование имени пользователя
+    """
     stmt = select(User).filter_by(name=username)
     result = await session.scalars(stmt)
     return result.one_or_none()
 
 
-
+async def get_user_by_id(
+    session: AsyncSession,
+    user_id: int,
+):
+    """Получает пользователя по его ID."""
+    stmt = select(User).filter_by(id=user_id)
+    result = await session.scalars(stmt)
+    return result.one_or_none()
