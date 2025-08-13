@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
+</head>
+<body>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+            <div class="gg " >
+                <form method=post>
+                    <fieldset class="fieldset" >
+                        <legend>Задача: {{ task.name }}</legend>
+                          <dl>
+                              <dt>Описание:</dt>
+                            <dd>
+                                <textarea class="describe" name="describe" rows="5" placeholder="Введите описание задачи..." {% if edit_mode == False %}disabled {% endif %}>{{task.describe }}</textarea>
+                                    {% if form.describe.errors %}
+                                    <ul class="errors">
+                                        {% for error in form.describe.errors %}
+                                            <li>{{ error }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                            </dd>
+                          </dl>
+                           <dl>
+                              <dt>Дата создания:</dt>
+                            <dd> {{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}
+
+                            </dd>
+                          </dl>
+                          <dl>
+                            <dt>Выполнена: </dt>
+                            <dd>
+                                <label class="radio">
+                                    <input type="radio" name="completed" value=True {% if task.completed == True %}checked{% endif %} {% if edit_mode == False %}disabled {% endif %}> да
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="completed" value=False {% if task.completed != True %}checked{% endif %} {% if edit_mode == False %}disabled {% endif %}> нет
+                                </label>
+                            </dd>
+                          </dl>
+                            {% if task.completed == True %}
+                              <dl>
+                                  <dt>Дата выполнения:</dt>
+                                <dd> {{ task.completed_at.strftime('%Y-%m-%d %H:%M:%S') }} </dd>
+                              </dl>
+                            {% endif %}
+
+                            <div class="submit-row">
+                                {% if edit_mode == False %}
+                                <input type=submit  name="change" value="Изменить задачу">
+                                {% else %}
+                                <input type=submit  name="save" value="Сохранить изменения">
+                                {% endif %}
+                                <button type="button" class="red-btn" onclick="window.location.href='/tasks/{{ task.id }}/before_delete'">Удалить задачу</button>
+                            </div>
+                </fieldset>
+            </form>
+            <div class="register">
+            <button onclick="window.location.href='/tasks'"> Назад</button>
+        </div>
+        </div>
+
+
+    </div>
+</body>
+</html>

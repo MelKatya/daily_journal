@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
+</head>
+<body>
+    <div class="header">
+          <h1>Ежедневник</h1>
+    </div>
+    <div class="container">
+
+        <form action="/tasks" method="get">
+        <div class="toolbar">
+            <div class="filter-group">
+
+                <div class="filter">
+                    <label>Фильтровать:</label>
+                    <div class="filter-options">
+                        {% for key, value in html_param.FILTER.html_map.items() %}
+                            <label class="radio-label">
+                                <input type="radio" name="{{ html_param.FILTER.name }}" value="{{ key }}"
+                                       onchange="this.form.submit()"
+                                       {% if filter_option == key %}checked{% endif %}>
+                                {{ value }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="filter">
+                    <label>Сортировать:</label>
+                    <select name="{{ html_param.SORTED.name }}" onchange="this.form.submit()">
+                        {% for key, value in html_param.SORTED.html_map.items() %}
+                            <option value="{{ key }}" {% if sort_option==key %} selected{% endif %}>{{ value }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="search">
+                <input type="search" name="{{ html_param.SEARCH.name }}" value="{{ search_query or '' }}" placeholder="Введите название задачи..." />
+                <input type="submit" value="Искать">
+            </div>
+        </div>
+        </form>
+        <div class="ggTable " >
+        <table class="customTable">
+            <thead>
+                <tr>
+                    <th>Номер</th>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Дата создания</th>
+                    <th>Завершена</th>
+                    <th>Дата завершения</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for task in tasks %}
+                <tr  onclick="window.location.href='/tasks/{{ task.id }}'" style="cursor: pointer;">
+                    <td>{{ task.id }}</td>
+                    <td>{{ task.name }}</td>
+                    <td>{{ task.describe }}</td>
+                    <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <input type="checkbox"  {% if task.completed == True %} checked {% endif %} disabled>
+                    </td>
+                    <td>
+                        {% if task.completed == True %}
+                        {{ task.completed_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        <div class="register">
+        <button onclick="window.location.href='/users/home'"> Назад</button>
+        </div>
+        </div>
+        </div>
+</body>
+</html>

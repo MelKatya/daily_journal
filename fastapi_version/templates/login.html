@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily journal</title>
+    <link rel="stylesheet" type="text/css" href="../static/style.css" />
+</head>
+<body>
+<div class="header">
+      <h1>Ежедневник</h1>
+</div>
+
+<div class="container">
+    <p class="hint">Добро пожаловать! Войдите в свой аккаунт или зарегистрируйтесь, чтобы начать вести задачи.</p>
+    <div class="gg ">
+        <fieldset class="fieldset">
+            <legend>Авторизация</legend>
+
+            <form action="/login" method="post" enctype="multipart/form-data">
+                {% from "_formhelpers.html" import render_field %}
+                <dl>
+                    {{ render_field(form.name, class="userinput") }}
+                    <br />
+                    {{ render_field(form.password, class="userinput") }}
+                </dl>
+                <div class="submit">
+                    <input type="submit" value="Войти"/>
+                </div>
+            </form>
+        </fieldset>
+
+        <div class="register">
+            <form action="/registration" method="get">
+                <input type="submit" value="Регистрация"/>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
