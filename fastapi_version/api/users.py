@@ -120,6 +120,8 @@ async def logout_user(
     return f"By, {user.name}"
 
 
-@router.post("/users/home")
-async def user_page(user=Depends(check_auth)):
-    return user
+@router.get("/users/home", response_class=HTMLResponse)
+async def user_page(request: Request, user=Depends(check_auth)):
+    return templates.TemplateResponse(
+        name="user_page.html", context={"request": request, "name": user.name}
+    )
