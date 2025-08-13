@@ -70,27 +70,45 @@ async def process_registration(
 #     )
 
 
+@router.get("/login", response_class=HTMLResponse)
+async def show_login_form(
+    request: Request,
+):
+    form = RegistrationForm()
+    return templates.TemplateResponse(
+        name="login.html", context={"request": request, "form": form}
+    )
 
-@router.post("/login")
-async def login_user(
+
+@router.post("/login", response_class=HTMLResponse)
+async def process_login(
     response: Response,
-    user_read: UserLogin,
+    request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     auth_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="invalid username or password",
     )
-    if not (user := await check_name_exists(session, user_read.name)):
-        raise auth_exception
 
-    if not verify_password(user_read.password, user.hashed_password):
-        raise auth_exception
+    form_data = await request.form()
+    form = RegistrationForm(form_data)
 
-    token = create_jwt_token(user.id)
+    if form.validate():
+        name, password = str(form.name.data), str(form.password.data)
 
-    response.set_cookie(key="token", value=token, httponly=True)
-    return {"user": user, "token": token}
+        if not (user := await check_name_exists(session, name)):
+            raise auth_exception
+
+        if not verify_password(password, user.hashed_password):
+            raise auth_exception
+
+        token = create_jwt_token(user.id)
+
+        response.set_cookie(key="token", value=token, httponly=True)
+        return RedirectResponse("/users/home")
+
+
 
 
 @router.post("/logout")
