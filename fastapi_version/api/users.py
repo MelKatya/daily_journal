@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Form, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Form, Request, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette import status
 
 from api.utils import check_auth
 from core.models import db_helper
-from core.schemas.users import UserCreate, UserCreateRead, UserLogin, RegistrationForm
+from core.schemas.users import UserCreate, UserCreateRead, UserLogin, RegistrationForm, LoginForm
 from crud.user import create_user, check_name_exists
 from security.utils import get_password_hash, verify_password, create_jwt_token
 
@@ -45,36 +44,26 @@ async def process_registration(
         )
         hashed_password = get_password_hash(password)
         new_user = UserCreate(name=name, email=email, hashed_password=hashed_password)
-        user = await create_user(session, new_user)
+        await create_user(session, new_user)
+        response = RedirectResponse("/login", status_code=303)
 
+        return response
+
+    else:
         return templates.TemplateResponse(
             "register.html", {"request": request, "form": form}
         )
-    else:
-        return {"message": "Пsssssтрирован!"}
-
-# @router.get("/registration", response_class=HTMLResponse)
-# async def registers_new_user(
-#     request: Request,
-#     user_read: UserCreateRead = Form(),
-#     session: AsyncSession = Depends(db_helper.session_getter),
-# ):
-#     """
-#     Регистрирует нового пользователя
-#     """
-#     hashed_password = get_password_hash(user_read.password)
-#     new_user = UserCreate(name=user_read.name, email=user_read.email, hashed_password=hashed_password)
-#     user = await create_user(session, new_user)
-#     return templates.TemplateResponse(
-#         request=request, name="register.html", context={"form": user_read}
-#     )
 
 
 @router.get("/login", response_class=HTMLResponse)
 async def show_login_form(
     request: Request,
+    token=Cookie(default=None),
 ):
-    form = RegistrationForm()
+    if token:
+        return RedirectResponse("/users/home")
+
+    form = LoginForm()
     return templates.TemplateResponse(
         name="login.html", context={"request": request, "form": form}
     )
@@ -82,7 +71,6 @@ async def show_login_form(
 
 @router.post("/login", response_class=HTMLResponse)
 async def process_login(
-    response: Response,
     request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
@@ -92,7 +80,7 @@ async def process_login(
     )
 
     form_data = await request.form()
-    form = RegistrationForm(form_data)
+    form = LoginForm(form_data)
 
     if form.validate():
         name, password = str(form.name.data), str(form.password.data)
@@ -105,23 +93,28 @@ async def process_login(
 
         token = create_jwt_token(user.id)
 
+        response = RedirectResponse("/users/home", status_code=303)
         response.set_cookie(key="token", value=token, httponly=True)
-        return RedirectResponse("/users/home")
+
+        return response
 
 
-
-
-@router.post("/logout")
+@router.get("/logout", response_class=HTMLResponse)
 async def logout_user(
-    response: Response,
+    request: Request,
     user=Depends(check_auth),
 ):
-    response.delete_cookie("token")
-    return f"By, {user.name}"
+    response = RedirectResponse("/login")
+    response.delete_cookie(key="token", httponly=True)
+
+    return response
 
 
 @router.get("/users/home", response_class=HTMLResponse)
-async def user_page(request: Request, user=Depends(check_auth)):
+async def user_page(
+    request: Request,
+    user=Depends(check_auth),
+):
     return templates.TemplateResponse(
         name="user_page.html", context={"request": request, "name": user.name}
     )
