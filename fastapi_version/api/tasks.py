@@ -1,19 +1,121 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
+from fastapi.params import Query
+from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
+from core.config import settings
 from core.models import db_helper
-from core.schemas.tasks import TaskGetForm, TaskCreate
-from crud.task import create_task
+from core.schemas.tasks import TaskGetForm, TaskCreate, TaskGet, CreateTaskForm
+from crud.task import create_task, get_all_tasks
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
+templates = Jinja2Templates(directory="templates")
 
 
-@router.post("/")
-async def create_task_route(
-    new_task: TaskGetForm,
+@router.get("/create", response_class=HTMLResponse)
+async def show_create_task_form(
+    request: Request,
+    user=Depends(check_auth),
+):
+    """Создает новую задачу"""
+    form = CreateTaskForm()
+    return templates.TemplateResponse(
+        name="create_task.html", context={"request": request, "form": form}
+    )
+
+
+@router.post("/create", response_class=HTMLResponse)
+async def process_create_task(
+    request: Request,
+    session: AsyncSession = Depends(db_helper.session_getter),
+    user=Depends(check_auth),
+):
+    """Создает новую задачу"""
+    form_data = await request.form()
+    form = CreateTaskForm(form_data)
+
+    if form.validate():
+        name = str(form.name.data)
+        describe = str(form.describe.data)
+
+        await create_task(TaskCreate(id_users=user.id, name=name, describe=describe), session)
+
+        response = RedirectResponse("/users/home", status_code=303)
+
+        return response
+
+    else:
+        return templates.TemplateResponse(
+            "create_task.html", {"request": request, "form": form}
+        )
+
+
+@router.get("/", response_class=HTMLResponse)
+async def show_all_tasks(
+    request: Request,
     user=Depends(check_auth),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    task = await create_task(TaskCreate(id_users=user.id, **new_task.model_dump()), session)
-    return task
+    """
+    Обрабатывает запрос на просмотр задач пользователя с параметрами
+    сортировки, фильтрации и поиска.
+    """
+    params = request.query_params
+    # Получаем параметр сортировки из URL (напр., "up" или "down")
+    sort_option = params.get(
+        settings.tasks.SORTED.name, settings.tasks.SORTED.default_html
+    )
+    assert isinstance(sort_option, str)
+    #  Подставляем соответствующее SQL-значение (напр., "created_at DESC")
+    assert isinstance(settings.tasks.SORTED.db_map, dict)
+    sorted_for_db = settings.tasks.SORTED.db_map.get(
+        sort_option, settings.tasks.SORTED.default_db
+    )
+    # assert isinstance(sorted_for_db, str)
+
+    # Получаем параметр фильтрации завершенности (напр., "completed")
+    filter_option = params.get(
+        settings.tasks.FILTER.name, settings.tasks.FILTER.default_html
+    )
+    assert isinstance(filter_option, str)
+    # Подставляем соответствующее значение для фильтрации в бд (напр., "true")
+    assert isinstance(settings.tasks.FILTER.db_map, dict)
+    filter_for_db = settings.tasks.FILTER.db_map.get(
+        filter_option, settings.tasks.FILTER.default_db
+    )
+    assert isinstance(filter_for_db, list)
+
+    # Получаем строку для поиска по названию задачи
+    search_query = params.get(
+        settings.tasks.SEARCH.name, settings.tasks.SEARCH.default_db
+    )
+    assert isinstance(search_query, str)
+
+    print(sorted_for_db, filter_for_db, search_query)
+    # Получаем задачи с учетом всех параметров
+    tasks = await get_all_tasks(
+        id_users=user.id,
+        sorted_for_db=sorted_for_db,
+        completed=filter_for_db,
+        search_query=search_query,
+        session=session,
+    )
+
+    return templates.TemplateResponse(
+        "tasks.html",
+        {
+            "request": request,
+            "tasks": tasks,
+            "html_param": settings.tasks,
+            "sort_option": sort_option,
+            "filter_option": filter_option,
+            "search_query": search_query,
+        }
+    )
+
