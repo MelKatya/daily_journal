@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import Task
@@ -76,4 +76,9 @@ async def change_describe_task_by_id(
     task.describe = describe
     await session.commit()
 
+
+async def delete_task_by_id(id_users: int, task_id: int, session: AsyncSession,):
+    stmt = delete(Task).where(Task.id == task_id, Task.id_users == id_users)
+    await session.execute(stmt)
+    await session.commit()
 
