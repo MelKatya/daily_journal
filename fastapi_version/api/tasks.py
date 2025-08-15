@@ -11,8 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.utils import check_auth
 from core.config import settings
 from core.models import db_helper
-from core.schemas.tasks import TaskGetForm, TaskCreate, TaskGet, CreateTaskForm
-from crud.task import create_task, get_all_tasks
+from core.schemas.tasks import TaskGetForm, TaskCreate, TaskGet, CreateTaskForm, ChangeTaskForm
+from crud.task import create_task, get_all_tasks, get_task_by_id, change_describe_task_by_id, not_completed_task_by_id, complete_task_by_id
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
 templates = Jinja2Templates(directory="templates")
@@ -116,6 +116,87 @@ async def show_all_tasks(
             "sort_option": sort_option,
             "filter_option": filter_option,
             "search_query": search_query,
+        }
+    )
+
+
+@router.get("/{task_id}", response_class=HTMLResponse)
+async def show_task_id_form(
+    task_id: int,
+    request: Request,
+    user=Depends(check_auth),
+    session: AsyncSession = Depends(db_helper.session_getter),
+):
+    """Отображает страницу задачу по ID."""
+    form = ChangeTaskForm()
+    print("form", form.describe)
+    edit_mode = False
+    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+
+    return templates.TemplateResponse(
+        name="task_id.html",
+        context={
+            "request": request,
+            "task": task,
+            "edit_mode": edit_mode,
+            "form": form,
+        }
+    )
+
+
+@router.post("/{task_id}", response_class=HTMLResponse)
+async def show_task_id_change(
+    task_id: int,
+    request: Request,
+    user=Depends(check_auth),
+    session: AsyncSession = Depends(db_helper.session_getter),
+):
+    """Отображает страницу задачу по ID."""
+    form_data = await request.form()
+    form = ChangeTaskForm(form_data)
+    edit_mode = False
+    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+
+    if "change" in form_data:
+        edit_mode = True
+
+    elif "save" in form_data and form.validate():
+        edit_mode = False
+        describe = form.describe.data
+        assert isinstance(describe, str)
+
+        completed = form_data.get("completed")
+
+        if completed == "True":
+            await complete_task_by_id(
+                id_users=user.id,
+                task_id=task_id,
+                session=session,
+            )
+
+        else:
+            await not_completed_task_by_id(
+                id_users=user.id,
+                task_id=task_id,
+                session=session,
+            )
+
+        await change_describe_task_by_id(
+            id_users=user.id,
+            task_id=task_id,
+            describe=describe,
+            session=session,
+        )
+
+        task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+
+    return templates.TemplateResponse(
+        name="task_id.html",
+        context={
+            "request": request,
+            "task": task,
+            "edit_mode": edit_mode,
+            "form": form,
         }
     )
 
