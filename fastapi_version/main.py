@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
@@ -14,10 +15,11 @@ async def lifespan(app: FastAPI):
     yield
     await db_helper.dispose()
 
+base_dir = Path(__file__).resolve().parent
 
 main_app = FastAPI(lifespan=lifespan)
 main_app.include_router(api_router)
-main_app.mount("/static", StaticFiles(directory="static"), name="static")
+main_app.mount("/static", StaticFiles(directory=base_dir / "static"), name="static")
 
 
 if __name__ == "__main__":
