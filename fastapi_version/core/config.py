@@ -1,5 +1,8 @@
+from typing import Any
+
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from sqlalchemy import desc
 
 
 class RunConfig(BaseModel):
@@ -26,6 +29,75 @@ class JwtConfig(BaseModel):
     access_token_expire: int = 60
 
 
+class ParamConfig(BaseModel):
+    """
+    Класс-шаблон для хранения параметров сортировки/фильтрации/поиска
+
+    Attributes:
+        name (str): название параметра.
+        default_db (str | tuple): значение по умолчанию для работы с бд.
+        default_html (str | None): значение по умолчанию для отображения
+            на HTML-страница.
+        db_map (dict[str, str | tuple[str, ...]] | None):
+            сопоставление значений из HTML-страницы с выражениями для SQL.
+        html_map (dict[str, str] | None):
+            сопоставление ключей с читаемыми подписями на HTML-странице.
+    """
+
+    name: str
+    default_db: str | list[bool]
+    default_html: str | None = None
+    db_map: dict[str, str | list[bool] | Any] | None = None
+    html_map: dict[str, str] | None = None
+
+
+class AllTaskParams(BaseModel):
+    """
+    Хранит преднастроенные параметры для сортировки, фильтрации и поиска задач.
+
+    Attributes:
+        SORTED (ParamConfig): параметры сортировки задач.
+        FILTER (ParamConfig): параметры фильтрации задач по статусу выполнения.
+        SEARCH (ParamConfig): параметры поиска задач по имени.
+    """
+
+    SORTED: ParamConfig = ParamConfig(
+        name="sorted",
+        default_db="created_at",
+        default_html="up",
+        db_map={
+            "up": "created_at",
+            "down": desc("created_at"),
+            "completed": "completed_at",
+            "name": "name",
+        },
+        html_map={
+            "up": "Сначала старые",
+            "down": "Сначала новые",
+            "completed": "По дате завершения",
+            "name": "По названию",
+        },
+    )
+
+    FILTER: ParamConfig = ParamConfig(
+        name="filter",
+        default_db=[True, False],
+        default_html="all",
+        db_map={
+            "all": [True, False],
+            "completed": [True, ],
+            "uncompleted": [False, ],
+        },
+        html_map={
+            "all": "Все",
+            "completed": "Только завершенные",
+            "uncompleted": "Только незавершенные",
+        },
+    )
+
+    SEARCH: ParamConfig = ParamConfig(name="search", default_db="")
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.template"),
@@ -37,6 +109,7 @@ class Settings(BaseSettings):
     api: ApiPrefix = ApiPrefix()
     db: DatabaseConfig
     jwt: JwtConfig
+    tasks: AllTaskParams = AllTaskParams()
 
 
 settings = Settings()
