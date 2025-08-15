@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request, Cookie
 from fastapi.params import Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -12,7 +12,7 @@ from api.utils import check_auth
 from core.config import settings
 from core.models import db_helper
 from core.schemas.tasks import TaskGetForm, TaskCreate, TaskGet, CreateTaskForm, ChangeTaskForm
-from crud.task import create_task, get_all_tasks, get_task_by_id, change_describe_task_by_id, not_completed_task_by_id, complete_task_by_id
+from crud.task import create_task, get_all_tasks, get_task_by_id, change_describe_task_by_id, not_completed_task_by_id, complete_task_by_id, delete_task_by_id
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
 templates = Jinja2Templates(directory="templates")
@@ -129,7 +129,6 @@ async def show_task_id_form(
 ):
     """Отображает страницу задачу по ID."""
     form = ChangeTaskForm()
-    print("form", form.describe)
     edit_mode = False
     task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
 
@@ -200,3 +199,82 @@ async def show_task_id_change(
         }
     )
 
+
+@router.get("/{task_id}/before_delete", response_class=HTMLResponse)
+async def before_delete_task_by_id(
+    task_id: int,
+    request: Request,
+    response: Response,
+    user=Depends(check_auth),
+    session: AsyncSession = Depends(db_helper.session_getter),
+):
+    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+
+    template_response = templates.TemplateResponse(
+        name="delete_id.html",
+        context={
+            "request": request,
+            "task": task,
+        }
+    )
+    template_response.set_cookie(key="allow_delete", value=str(task_id), httponly=True)
+    return template_response
+
+
+@router.get("/{task_id}/delete", response_class=HTMLResponse)
+async def delete_task_by_id_form(
+    task_id: int,
+    request: Request,
+    allow_delete=Cookie(default=None),
+    user=Depends(check_auth),
+    session: AsyncSession = Depends(db_helper.session_getter),
+):
+
+    if allow_delete != str(task_id):
+        template_response = templates.TemplateResponse(
+            name="mistakes.html",
+            context={
+                "request": request,
+                "code": 403,
+                "message": "Deletion not confirmed"
+            }
+        )
+        template_response.delete_cookie(key="allow_delete", httponly=True)
+        return template_response
+
+    await delete_task_by_id(
+        id_users=user.id,
+        task_id=task_id,
+        session=session,
+    )
+
+    response = RedirectResponse("/tasks/")
+    response.delete_cookie(key="allow_delete", httponly=True)
+
+    return response
+
+
+@router.get("/{task_id}/cancel_delete", response_class=HTMLResponse)
+async def cancel_delete_task_by_id(
+    task_id: int,
+    request: Request,
+    allow_delete=Cookie(default=None),
+    user=Depends(check_auth),
+):
+
+    if allow_delete != str(task_id):
+        template_response = templates.TemplateResponse(
+            name="mistakes.html",
+            context={
+                "request": request,
+                "code": 403,
+                "message": "Deletion not confirmed"
+            }
+        )
+        template_response.delete_cookie(key="allow_delete", httponly=True)
+        return template_response
+
+    response = RedirectResponse(f"/tasks/{task_id}")
+    response.delete_cookie(key="allow_delete", httponly=True)
+
+    return response
