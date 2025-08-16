@@ -1,18 +1,15 @@
 from typing import Any
+from pathlib import Path
 
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import desc
+from starlette.templating import Jinja2Templates
 
 
 class RunConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
-
-
-class ApiPrefix(BaseModel):
-    users: str = "/users"
-    tasks: str = "/tasks"
 
 
 class DatabaseConfig(BaseSettings):
@@ -106,7 +103,7 @@ class Settings(BaseSettings):
         env_prefix="APP_CONFIG__",
     )
     run: RunConfig = RunConfig()
-    api: ApiPrefix = ApiPrefix()
+    templates: Any = Jinja2Templates(directory="templates")
     db: DatabaseConfig
     jwt: JwtConfig
     tasks: AllTaskParams = AllTaskParams()
