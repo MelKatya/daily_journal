@@ -2,23 +2,9 @@ from pydantic import BaseModel, EmailStr
 from wtforms import Form, PasswordField, StringField, validators
 
 
-class UserBase(BaseModel):
+class UserCreate(BaseModel):
     name: str
-
-
-class UserLogin(UserBase):
-    password: str
-
-
-class UserCreateRead(UserLogin):
-    email: EmailStr
-
-
-class UserHashPass(UserBase):
     hashed_password: str
-
-
-class UserCreate(UserHashPass):
     email: EmailStr
 
 
