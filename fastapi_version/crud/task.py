@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import select, desc, delete
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import Task

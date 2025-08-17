@@ -1,20 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Form, Request, Cookie
+from fastapi import APIRouter, Depends, HTTPException, Request, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
+from core.config import settings
 from core.models import db_helper
-from core.schemas.users import UserCreate, UserCreateRead, UserLogin, RegistrationForm, LoginForm
+from core.schemas.users import UserCreate, RegistrationForm, LoginForm
 from crud.user import create_user, check_name_exists
 from security.utils import get_password_hash, verify_password, create_jwt_token
 
 router = APIRouter(tags=["Users"])
-# router.mount("/static", StaticFiles(directory="/static"), name="static")
-
-
-templates = Jinja2Templates(directory="templates")
+templates = settings.templates
 
 
 @router.get("/registration", response_class=HTMLResponse)
@@ -75,7 +71,7 @@ async def process_login(
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
     auth_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=401,
         detail="invalid username or password",
     )
 

@@ -1,21 +1,15 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Request, Cookie
-from fastapi.params import Query
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
 from core.config import settings
-from core.models import db_helper
-from core.schemas.tasks import TaskGetForm, TaskCreate, TaskGet, CreateTaskForm, ChangeTaskForm
-from crud.task import create_task, get_all_tasks, get_task_by_id, change_describe_task_by_id, not_completed_task_by_id, complete_task_by_id, delete_task_by_id
+from core.models import db_helper, Task
+from core.schemas.tasks import TaskCreate, CreateTaskForm, ChangeTaskForm
+from crud import task as tsk
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
-templates = Jinja2Templates(directory="templates")
+templates = settings.templates
 
 
 @router.get("/create", response_class=HTMLResponse)
@@ -44,11 +38,9 @@ async def process_create_task(
         name = str(form.name.data)
         describe = str(form.describe.data)
 
-        await create_task(TaskCreate(id_users=user.id, name=name, describe=describe), session)
+        await tsk.create_task(TaskCreate(id_users=user.id, name=name, describe=describe), session)
 
-        response = RedirectResponse("/users/home", status_code=303)
-
-        return response
+        return RedirectResponse("/users/home", status_code=303)
 
     else:
         return templates.TemplateResponse(
@@ -56,7 +48,7 @@ async def process_create_task(
         )
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
 async def show_all_tasks(
     request: Request,
     user=Depends(check_auth),
@@ -67,6 +59,7 @@ async def show_all_tasks(
     сортировки, фильтрации и поиска.
     """
     params = request.query_params
+
     # Получаем параметр сортировки из URL (напр., "up" или "down")
     sort_option = params.get(
         settings.tasks.SORTED.name, settings.tasks.SORTED.default_html
@@ -97,9 +90,8 @@ async def show_all_tasks(
     )
     assert isinstance(search_query, str)
 
-    print(sorted_for_db, filter_for_db, search_query)
     # Получаем задачи с учетом всех параметров
-    tasks = await get_all_tasks(
+    tasks = await tsk.get_all_tasks(
         id_users=user.id,
         sorted_for_db=sorted_for_db,
         completed=filter_for_db,
@@ -130,7 +122,7 @@ async def show_task_id_form(
     """Отображает страницу задачу по ID."""
     form = ChangeTaskForm()
     edit_mode = False
-    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
 
     return templates.TemplateResponse(
         name="task_id.html",
@@ -154,7 +146,13 @@ async def show_task_id_change(
     form_data = await request.form()
     form = ChangeTaskForm(form_data)
     edit_mode = False
-    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+
+    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    if task is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with id={task_id} not found"
+        )
 
     if "change" in form_data:
         edit_mode = True
@@ -167,27 +165,27 @@ async def show_task_id_change(
         completed = form_data.get("completed")
 
         if completed == "True":
-            await complete_task_by_id(
+            await tsk.complete_task_by_id(
                 id_users=user.id,
                 task_id=task_id,
                 session=session,
             )
 
         else:
-            await not_completed_task_by_id(
+            await tsk.not_completed_task_by_id(
                 id_users=user.id,
                 task_id=task_id,
                 session=session,
             )
 
-        await change_describe_task_by_id(
+        await tsk.change_describe_task_by_id(
             id_users=user.id,
             task_id=task_id,
             describe=describe,
             session=session,
         )
 
-        task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+        task: Task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
 
     return templates.TemplateResponse(
         name="task_id.html",
@@ -204,11 +202,15 @@ async def show_task_id_change(
 async def before_delete_task_by_id(
     task_id: int,
     request: Request,
-    response: Response,
     user=Depends(check_auth),
     session: AsyncSession = Depends(db_helper.session_getter),
 ):
-    task = await get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    if task is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Task with id={task_id} not found"
+        )
 
     template_response = templates.TemplateResponse(
         name="delete_id.html",
@@ -242,13 +244,13 @@ async def delete_task_by_id_form(
         template_response.delete_cookie(key="allow_delete", httponly=True)
         return template_response
 
-    await delete_task_by_id(
+    await tsk.delete_task_by_id(
         id_users=user.id,
         task_id=task_id,
         session=session,
     )
 
-    response = RedirectResponse("/tasks/")
+    response = RedirectResponse("/tasks")
     response.delete_cookie(key="allow_delete", httponly=True)
 
     return response

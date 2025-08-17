@@ -1,25 +1,11 @@
 from pydantic import BaseModel
-from sqlalchemy.orm import Query
 from wtforms import Form, StringField, validators
 
 
-class TaskBase(BaseModel):
+class TaskCreate(BaseModel):
     id_users: int
-
-
-class TaskGetForm(BaseModel):
     name: str
     describe: str
-
-
-class TaskCreate(TaskBase, TaskGetForm):
-    pass
-
-
-class TaskGet(TaskBase):
-    sort_option: str = "up"
-    filter_option: str = "all"
-    search_query: str = ""
 
 
 class CreateTaskForm(Form):
