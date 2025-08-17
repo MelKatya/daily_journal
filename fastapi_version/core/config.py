@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, PostgresDsn
@@ -8,11 +7,30 @@ from starlette.templating import Jinja2Templates
 
 
 class RunConfig(BaseModel):
+    """
+    Конфигурация подключения к приложению.
+
+    Attributes:
+        host (str): хост подключения.
+        port (int): порт подключения.
+    """
+
     host: str = "0.0.0.0"
     port: int = 8000
 
 
 class DatabaseConfig(BaseSettings):
+    """
+    Конфигурация подключения к базе данных.
+
+    Attributes:
+        url (str): строка подключения к БД.
+        echo (bool): логирование SQL-запросов.
+        echo_pool (bool): логирование работы пула соединений.
+        pool_size (int): размер пула соединений.
+        max_overflow (int): максимальное число дополнительных соединений.
+    """
+
     url: PostgresDsn
     echo: bool = False
     echo_pool: bool = False
@@ -21,6 +39,15 @@ class DatabaseConfig(BaseSettings):
 
 
 class JwtConfig(BaseModel):
+    """
+    Конфигурация JWT.
+
+    Attributes:
+        secret_key (str): пароль для подписания JWT.
+        algorithm (str): алгоритм.
+        access_token_expire (int): время истечения токена.
+    """
+
     secret_key: str
     algorithm: str
     access_token_expire: int = 60
@@ -100,6 +127,17 @@ class AllTaskParams(BaseModel):
 
 
 class Settings(BaseSettings):
+    """
+    Хранит настройки для работы приложения.
+
+    Attributes:
+        model_config
+        run (RunConfig): запуска приложения.
+        templates (Any): папка для хранения html форм.
+        jwt (JwtConfig): конфигурация JWT.
+        tasks (AllTaskParams): параметры сортировки, фильтрации и поиска задач.
+    """
+
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.template"),
         case_sensitive=False,
