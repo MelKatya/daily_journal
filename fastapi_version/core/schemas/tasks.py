@@ -3,6 +3,10 @@ from wtforms import Form, StringField, validators
 
 
 class TaskCreate(BaseModel):
+    """
+    Валидирует входные данные при создании задачи
+    """
+
     id_users: int
     name: str
     describe: str
@@ -10,7 +14,7 @@ class TaskCreate(BaseModel):
 
 class CreateTaskForm(Form):
     """
-    Валидирует данные формы создания задачи.
+    WTForms-форма для создания задачи (валидация в веб-форме).
     """
 
     name = StringField("Название", [validators.Length(min=4, max=25)])
@@ -19,7 +23,7 @@ class CreateTaskForm(Form):
 
 class ChangeTaskForm(Form):
     """
-    Валидирует данные формы изменения задачи.
+    WTForms-форма для изменения задачи (обязательное поле describe).
     """
 
     describe = StringField(

@@ -3,6 +3,10 @@ from wtforms import Form, PasswordField, StringField, validators
 
 
 class UserCreate(BaseModel):
+    """
+    Валидирует входные данные при создании пользователя
+    """
+
     name: str
     hashed_password: str
     email: EmailStr
@@ -10,7 +14,7 @@ class UserCreate(BaseModel):
 
 class RegistrationForm(Form):
     """
-    Валидирует данные формы регистрации нового пользователя.
+    WTForms-форма регистрации (проверка имени, email, пароля + подтверждение).
     """
 
     name = StringField("Имя", [validators.Length(min=4, max=25)])
@@ -27,7 +31,7 @@ class RegistrationForm(Form):
 
 class LoginForm(Form):
     """
-    Валидирует данные формы авторизации пользователя.
+    WTForms-форма входа (валидация имени и пароля).
     """
 
     name = StringField("Имя", [validators.Length(min=4, max=25)])
