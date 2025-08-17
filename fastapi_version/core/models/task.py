@@ -11,6 +11,21 @@ if TYPE_CHECKING:
 
 
 class Task(Base):
+    """
+    ORM-модель таблицы 'tasks'.
+
+    Поля:
+        id (int): первичный ключ.
+        id_users (int): внешний ключ на таблицу 'users'.
+        name (str): название задачи (макс. 30 символов).
+        describe (str): описание задачи.
+        created_at (datetime): время создания (по умолчанию текущее).
+        completed (bool): статус выполнения (по умолчанию False).
+        completed_at(datetime | None): время завершения, если задача выполнена.
+
+    Связи:
+        users (User): связь многие-к-одному с таблицей пользователей.
+    """
 
     id_users: Mapped[int] = mapped_column(
         ForeignKey("users.id"),

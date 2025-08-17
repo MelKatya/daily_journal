@@ -11,6 +11,19 @@ from core.config import settings
 
 
 class DatabaseHelper:
+    """
+    Инициализирует объект DatabaseHelper.
+
+    Создает асинхронный движок SQLAlchemy и фабрику сессий.
+
+    Args:
+        url (str): строка подключения к БД.
+        echo (bool): логирование SQL-запросов.
+        echo_pool (bool): логирование работы пула соединений.
+        pool_size (int): размер пула соединений.
+        max_overflow (int): максимальное число дополнительных соединений.
+    """
+
     def __init__(
         self,
         url: str,
@@ -26,8 +39,8 @@ class DatabaseHelper:
             pool_size=pool_size,
             max_overflow=max_overflow,
         )
-        # Создаем фабрику сессий
-        self.session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(
+        # Фабрика для создания асинхронных сессий SQLAlchemy
+        self.session_factory: async_sessionmaker[AsyncSession] = async_sessionmaker(  # noqa E501
             bind=self.engine,
             autoflush=False,
             autocommit=False,
@@ -36,13 +49,14 @@ class DatabaseHelper:
 
     async def dispose(self) -> None:
         """
-        Закрытие соединения с движком
+        Освобождает ресурсы и закрывает асинхронный движок SQLAlchemy.
         """
         await self.engine.dispose()
 
     async def session_getter(self) -> AsyncGenerator[AsyncSession, None]:
         """
-        Генератор сессий
+        Асинхронный генератор для предоставления сессий.
+        Гарантирует корректное закрытие сессии после использования.
         """
         async with self.session_factory() as session:
             yield session
