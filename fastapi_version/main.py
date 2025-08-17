@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -13,7 +13,11 @@ from core.models import db_helper
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # noqa B008
+    """
+    Контекстный менеджер жизненного цикла приложения.
+    При завершении работы приложения освобождает ресурсы подключения к БД.
+    """
     yield
     await db_helper.dispose()
 
@@ -31,11 +35,23 @@ main_app.mount(
 
 
 @main_app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request, exc):
-    if "Location" in exc.headers:
-        return RedirectResponse(exc.headers["Location"], status_code=exc.status_code)
+async def http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException,
+) -> Response:
+    """
+    Обработчик исключений StarletteHTTPException.
 
-    template_response = templates.TemplateResponse(
+    Если в заголовках присутствует ключ 'Location', выполняет редирект.
+    В противном случае возвращает HTML-страницу с кодом ошибки и сообщением.
+    """
+    if "Location" in exc.headers:
+        return RedirectResponse(
+            exc.headers["Location"],
+            status_code=exc.status_code,
+        )
+
+    return templates.TemplateResponse(
         name="mistakes.html",
         context={
             "request": request,
@@ -43,13 +59,13 @@ async def http_exception_handler(request, exc):
             "message": str(exc.detail),
         },
     )
-    return template_response
 
 
 @main_app.get("/", response_class=HTMLResponse)
-def home_page():
+def home_page() -> RedirectResponse:
     """
-    Корневой маршрут: перенаправляет на страницу входа пользователя.
+    Корневой маршрут.
+    Возвращает редирект на страницу авторизации ('/login').
     """
     return RedirectResponse("/login")
 
