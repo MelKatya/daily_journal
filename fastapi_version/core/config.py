@@ -1,5 +1,5 @@
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -82,8 +82,12 @@ class AllTaskParams(BaseModel):
         default_html="all",
         db_map={
             "all": [True, False],
-            "completed": [True, ],
-            "uncompleted": [False, ],
+            "completed": [
+                True,
+            ],
+            "uncompleted": [
+                False,
+            ],
         },
         html_map={
             "all": "Все",

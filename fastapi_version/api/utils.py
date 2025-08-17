@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends, Cookie, Request
+from fastapi import Cookie, Depends, HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper

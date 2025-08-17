@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import Task
@@ -24,9 +24,15 @@ async def get_all_tasks(
 ):
     """Возвращает список отсортированных и отфильтрованных задач.
     Ищет задачи по названию."""
-    stmt = select(Task).\
-        where(Task.id_users == id_users, Task.completed.in_(completed), Task.name.ilike(f"%{search_query}%")).\
-        order_by(sorted_for_db)
+    stmt = (
+        select(Task)
+        .where(
+            Task.id_users == id_users,
+            Task.completed.in_(completed),
+            Task.name.ilike(f"%{search_query}%"),
+        )
+        .order_by(sorted_for_db)
+    )
     result = await session.scalars(stmt)
     return result.all()
 
@@ -77,8 +83,11 @@ async def change_describe_task_by_id(
     await session.commit()
 
 
-async def delete_task_by_id(id_users: int, task_id: int, session: AsyncSession,):
+async def delete_task_by_id(
+    id_users: int,
+    task_id: int,
+    session: AsyncSession,
+):
     stmt = delete(Task).where(Task.id == task_id, Task.id_users == id_users)
     await session.execute(stmt)
     await session.commit()
-

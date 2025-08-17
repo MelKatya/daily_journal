@@ -3,12 +3,12 @@ from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse, HTMLResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from core.config import settings
 from api import router as api_router
+from core.config import settings
 from core.models import db_helper
 
 
@@ -23,7 +23,11 @@ templates = settings.templates
 
 main_app = FastAPI(lifespan=lifespan)
 main_app.include_router(api_router)
-main_app.mount("/static", StaticFiles(directory=base_dir / "static"), name="static",)
+main_app.mount(
+    "/static",
+    StaticFiles(directory=base_dir / "static"),
+    name="static",
+)
 
 
 @main_app.exception_handler(StarletteHTTPException)
@@ -36,8 +40,8 @@ async def http_exception_handler(request, exc):
         context={
             "request": request,
             "code": exc.status_code,
-            "message": str(exc.detail)
-        }
+            "message": str(exc.detail),
+        },
     )
     return template_response
 

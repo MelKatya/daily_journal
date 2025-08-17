@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request, Cookie
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
 from core.config import settings
-from core.models import db_helper, Task
-from core.schemas.tasks import TaskCreate, CreateTaskForm, ChangeTaskForm
+from core.models import Task, db_helper
+from core.schemas.tasks import ChangeTaskForm, CreateTaskForm, TaskCreate
 from crud import task as tsk
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
@@ -38,7 +38,9 @@ async def process_create_task(
         name = str(form.name.data)
         describe = str(form.describe.data)
 
-        await tsk.create_task(TaskCreate(id_users=user.id, name=name, describe=describe), session)
+        await tsk.create_task(
+            TaskCreate(id_users=user.id, name=name, describe=describe), session
+        )
 
         return RedirectResponse("/users/home", status_code=303)
 
@@ -108,7 +110,7 @@ async def show_all_tasks(
             "sort_option": sort_option,
             "filter_option": filter_option,
             "search_query": search_query,
-        }
+        },
     )
 
 
@@ -131,7 +133,7 @@ async def show_task_id_form(
             "task": task,
             "edit_mode": edit_mode,
             "form": form,
-        }
+        },
     )
 
 
@@ -151,7 +153,7 @@ async def show_task_id_change(
     if task is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with id={task_id} not found"
+            detail=f"Task with id={task_id} not found",
         )
 
     if "change" in form_data:
@@ -185,7 +187,9 @@ async def show_task_id_change(
             session=session,
         )
 
-        task: Task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+        task: Task = await tsk.get_task_by_id(
+            id_users=user.id, task_id=task_id, session=session
+        )
 
     return templates.TemplateResponse(
         name="task_id.html",
@@ -194,7 +198,7 @@ async def show_task_id_change(
             "task": task,
             "edit_mode": edit_mode,
             "form": form,
-        }
+        },
     )
 
 
@@ -209,7 +213,7 @@ async def before_delete_task_by_id(
     if task is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with id={task_id} not found"
+            detail=f"Task with id={task_id} not found",
         )
 
     template_response = templates.TemplateResponse(
@@ -217,7 +221,7 @@ async def before_delete_task_by_id(
         context={
             "request": request,
             "task": task,
-        }
+        },
     )
     template_response.set_cookie(key="allow_delete", value=str(task_id), httponly=True)
     return template_response
@@ -238,8 +242,8 @@ async def delete_task_by_id_form(
             context={
                 "request": request,
                 "code": 403,
-                "message": "Deletion not confirmed"
-            }
+                "message": "Deletion not confirmed",
+            },
         )
         template_response.delete_cookie(key="allow_delete", httponly=True)
         return template_response
@@ -270,8 +274,8 @@ async def cancel_delete_task_by_id(
             context={
                 "request": request,
                 "code": 403,
-                "message": "Deletion not confirmed"
-            }
+                "message": "Deletion not confirmed",
+            },
         )
         template_response.delete_cookie(key="allow_delete", httponly=True)
         return template_response
