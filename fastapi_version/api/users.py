@@ -147,6 +147,10 @@ async def process_login(
 
         return response
 
+    return templates.TemplateResponse(
+        name="login.html", context={"request": request, "form": form}
+    )
+
 
 @router.get("/logout", response_class=HTMLResponse)
 async def logout_user(

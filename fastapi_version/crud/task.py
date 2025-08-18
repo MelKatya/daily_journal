@@ -18,10 +18,10 @@ async def create_task(task: TaskCreate, session: AsyncSession) -> Task:
     Returns:
         Task: объект созданной задачи с актуальными полями.
     """
-    task = Task(**task.model_dump())
-    session.add(task)
+    new_task = Task(**task.model_dump())
+    session.add(new_task)
     await session.commit()
-    return task
+    return new_task
 
 
 async def get_all_tasks(
@@ -92,10 +92,11 @@ async def complete_task_by_id(
         task_id (int): ID задачи.
         session (AsyncSession): асинхронная сессия SQLAlchemy.
     """
-    task = await get_task_by_id(id_users, task_id, session)
-    task.completed = True
-    task.completed_at = datetime.datetime.now()
-    await session.commit()
+    task: Task | None = await get_task_by_id(id_users, task_id, session)
+    if task:
+        task.completed = True
+        task.completed_at = datetime.datetime.now()
+        await session.commit()
 
 
 async def not_completed_task_by_id(
@@ -111,10 +112,11 @@ async def not_completed_task_by_id(
         task_id (int): ID задачи.
         session (AsyncSession): асинхронная сессия SQLAlchemy.
     """
-    task = await get_task_by_id(id_users, task_id, session)
-    task.completed = False
-    task.completed_at = None
-    await session.commit()
+    task: Task | None = await get_task_by_id(id_users, task_id, session)
+    if task:
+        task.completed = False
+        task.completed_at = None
+        await session.commit()
 
 
 async def change_describe_task_by_id(
@@ -132,9 +134,10 @@ async def change_describe_task_by_id(
         describe (str): описание задачи.
         session (AsyncSession): асинхронная сессия SQLAlchemy.
     """
-    task = await get_task_by_id(id_users, task_id, session)
-    task.describe = describe
-    await session.commit()
+    task: Task | None = await get_task_by_id(id_users, task_id, session)
+    if task:
+        task.describe = describe
+        await session.commit()
 
 
 async def delete_task_by_id(

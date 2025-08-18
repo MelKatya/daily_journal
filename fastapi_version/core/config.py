@@ -151,4 +151,4 @@ class Settings(BaseSettings):
     tasks: AllTaskParams = AllTaskParams()
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]

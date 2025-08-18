@@ -38,7 +38,7 @@ async def show_create_task_form(
 async def process_create_task(
     request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
-    user: User = Depends(check_auth), # noqa B008
+    user: User = Depends(check_auth),  # noqa B008
 ) -> HTMLResponse | RedirectResponse:
     """
     Обрабатывает POST-запрос на создание новой задачи.
@@ -265,7 +265,7 @@ async def show_task_id_change(
             session=session,
         )
 
-        task: Task = await tsk.get_task_by_id(
+        task: Task | None = await tsk.get_task_by_id(  # type: ignore[no-redef]
             id_users=user.id, task_id=task_id, session=session
         )
 

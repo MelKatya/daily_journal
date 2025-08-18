@@ -53,7 +53,9 @@ def create_jwt_token(user_id: int) -> str:
     return jwt.encode(payload, settings.jwt.secret_key, settings.jwt.algorithm)
 
 
-def get_user_id_from_token(token: str = Depends(oauth2_scheme)) -> int | None:  # noqa: B008 E501
+def get_user_id_from_token(
+    token: str = Depends(oauth2_scheme),  # noqa: B008 E501
+) -> int | None:
     """
     Получает ID пользователя из JWT-токена.
 

@@ -27,6 +27,7 @@ async def check_auth(
         raise HTTPException(status_code=303, headers={"Location": "/login"})
 
     user_id = get_user_id_from_token(token)
+    assert isinstance(user_id, int)
     if not (user := await get_user_by_id(session, user_id)):
         raise HTTPException(status_code=303, headers={"Location": "/login"})
 

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import TEXT, VARCHAR, ForeignKey, false, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -41,6 +41,6 @@ class Task(Base):
         default=False,
         server_default=false(),
     )
-    completed_at: Mapped[datetime] = mapped_column(nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(nullable=True)
 
     users: Mapped["User"] = relationship(back_populates="tasks")

@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI, Request, Response
@@ -45,7 +46,7 @@ async def http_exception_handler(
     Если в заголовках присутствует ключ 'Location', выполняет редирект.
     В противном случае возвращает HTML-страницу с кодом ошибки и сообщением.
     """
-    if "Location" in exc.headers:
+    if exc.headers is not None and "Location" in exc.headers:
         return RedirectResponse(
             exc.headers["Location"],
             status_code=exc.status_code,
