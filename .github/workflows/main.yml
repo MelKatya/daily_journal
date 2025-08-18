@@ -31,10 +31,10 @@ jobs:
         run: rm -rf .mypy_cache
 
       - name: Run MyPy (flask)
-        run: mypy --exclude "fastapi_version"
+        run: mypy flask_version --exclude "fastapi_version"
 
       - name: Run MyPy (fastapi)
-        run: mypy --exclude "flask_version"
+        run: mypy fastapi_version --exclude "flask_version"
 
       - name: Run Black
         run: black --check --diff .
