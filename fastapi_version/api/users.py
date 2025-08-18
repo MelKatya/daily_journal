@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
 from core.config import settings
-from core.models import db_helper
+from core.models import User, db_helper
 from core.schemas.users import LoginForm, RegistrationForm, UserCreate
 from crud.user import check_name_exists, create_user
 from security.utils import create_jwt_token, get_password_hash, verify_password
@@ -14,7 +14,13 @@ templates = settings.templates
 
 
 @router.get("/registration", response_class=HTMLResponse)
-async def show_registration_form(request: Request):
+async def show_registration_form(request: Request) -> HTMLResponse:
+    """
+    Обрабатывает GET-запрос с формой регистрации.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+    """
     form = RegistrationForm()
     return templates.TemplateResponse(
         name="register.html", context={"request": request, "form": form}
@@ -24,10 +30,21 @@ async def show_registration_form(request: Request):
 @router.post("/registration", response_class=HTMLResponse)
 async def process_registration(
     request: Request,
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse | RedirectResponse:
     """
-    Регистрирует нового пользователя
+    Обрабатывает POST-запрос формы регистрации нового пользователя.
+    - Проверяет валидность введенных данных.
+    - Создает нового пользователя с помощью 'create_user'.
+    - Перенаправляет на страницу авторизации.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse | RedirectResponse: редирект на страницу /login при
+            успешной регистрации или страницу регистрации с ошибками формы.
     """
     form_data = await request.form()
     form = RegistrationForm(form_data)
@@ -39,11 +56,14 @@ async def process_registration(
             str(form.password.data),
         )
         hashed_password = get_password_hash(password)
-        new_user = UserCreate(name=name, email=email, hashed_password=hashed_password)
+        new_user = UserCreate(
+            name=name,
+            email=email,
+            hashed_password=hashed_password,
+        )
         await create_user(session, new_user)
-        response = RedirectResponse("/login", status_code=303)
 
-        return response
+        return RedirectResponse("/login", status_code=303)
 
     else:
         return templates.TemplateResponse(
@@ -54,8 +74,23 @@ async def process_registration(
 @router.get("/login", response_class=HTMLResponse)
 async def show_login_form(
     request: Request,
-    token=Cookie(default=None),
-):
+    token: str | None = Cookie(default=None),  # noqa B008
+) -> HTMLResponse | RedirectResponse:
+    """
+    Обрабатывает GET-запрос формы авторизации.
+    Если токен найден в cookies, перенаправляет пользователя на домашнюю
+        страницу.
+    Если токена нет, возвращает страницу с формой авторизации.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        token (str | None): JWT-токен из cookies, если он существует.
+
+    Returns:
+        HTMLResponse | RedirectResponse:
+            - RedirectResponse — редирект на /users/home при наличии токена.
+            - HTMLResponse — страница авторизации без токена.
+    """
     if token:
         return RedirectResponse("/users/home")
 
@@ -68,8 +103,26 @@ async def show_login_form(
 @router.post("/login", response_class=HTMLResponse)
 async def process_login(
     request: Request,
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse | RedirectResponse:
+    """
+    Обрабатывает POST-запрос авторизации пользователя.
+    - Проверяет валидность введенных данных.
+    - В случае успеха создаёт JWT-токен, сохраняет его в cookies
+        и перенаправляет на домашнюю страницу.
+    - Перенаправляет на основную страницу пользователя.
+    - Если введен неверно логин и/или пароль, то перенаправляет на страницу
+        с ошибкой.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse | RedirectResponse:
+            - RedirectResponse — успешная авторизация (переход на /users/home).
+            - HTMLResponse — форма авторизации с ошибкой.
+    """
     auth_exception = HTTPException(
         status_code=401,
         detail="invalid username or password",
@@ -97,20 +150,39 @@ async def process_login(
 
 @router.get("/logout", response_class=HTMLResponse)
 async def logout_user(
-    request: Request,
-    user=Depends(check_auth),
-):
+    user: User | None = Depends(check_auth),  # noqa B008
+) -> RedirectResponse:
+    """
+    Выполняет выход пользователя из системы.
+    - Удаляет cookie с JWT-токеном.
+    - Перенаправляет на страницу авторизации.
+
+    Args:
+        user (User | None): объект текущего пользователя.
+
+    Returns:
+        RedirectResponse: редирект на страницу авторизации.
+    """
     response = RedirectResponse("/login")
     response.delete_cookie(key="token", httponly=True)
-
     return response
 
 
 @router.get("/users/home", response_class=HTMLResponse)
 async def user_page(
     request: Request,
-    user=Depends(check_auth),
-):
+    user: User | None = Depends(check_auth),  # noqa B008
+) -> HTMLResponse:
+    """
+    Отображает личную страницу пользователя (home page).
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        user (User | None): объект текущего пользователя.
+
+    Returns:
+        HTMLResponse: HTML-страница пользователя.
+    """
     return templates.TemplateResponse(
         name="user_page.html", context={"request": request, "name": user.name}
     )
