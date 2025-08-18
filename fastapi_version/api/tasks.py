@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.utils import check_auth
 from core.config import settings
-from core.models import Task, db_helper
+from core.models import Task, User, db_helper
 from core.schemas.tasks import ChangeTaskForm, CreateTaskForm, TaskCreate
 from crud import task as tsk
 
@@ -15,9 +15,19 @@ templates = settings.templates
 @router.get("/create", response_class=HTMLResponse)
 async def show_create_task_form(
     request: Request,
-    user=Depends(check_auth),
-):
-    """Создает новую задачу"""
+    user: User = Depends(check_auth),  # noqa B008
+) -> HTMLResponse:
+    """
+    Обрабатывает GET-запрос с формой создания новой задачи.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        user (User): объект текущего пользователя.
+
+    Returns:
+        HTMLResponse: отрендеренный шаблон "create_task.html"
+            с формой для создания задачи.
+    """
     form = CreateTaskForm()
     return templates.TemplateResponse(
         name="create_task.html", context={"request": request, "form": form}
@@ -27,10 +37,26 @@ async def show_create_task_form(
 @router.post("/create", response_class=HTMLResponse)
 async def process_create_task(
     request: Request,
-    session: AsyncSession = Depends(db_helper.session_getter),
-    user=Depends(check_auth),
-):
-    """Создает новую задачу"""
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+    user: User = Depends(check_auth), # noqa B008
+) -> HTMLResponse | RedirectResponse:
+    """
+    Обрабатывает POST-запрос на создание новой задачи.
+    - Проверяет валидность введенных данных.
+    - Добавляет новую задачу в бд.
+    - Перенаправляет на страницу со всеми задачами пользователя.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+        user (User): объект текущего пользователя.
+
+    Returns:
+        HTMLResponse | RedirectResponse:
+            - RedirectResponse — редирект на страницу со всем задачами
+                пользователя.
+            - HTMLResponse — форма создания задачи с ошибкой.
+    """
     form_data = await request.form()
     form = CreateTaskForm(form_data)
 
@@ -42,7 +68,7 @@ async def process_create_task(
             TaskCreate(id_users=user.id, name=name, describe=describe), session
         )
 
-        return RedirectResponse("/users/home", status_code=303)
+        return RedirectResponse("/tasks", status_code=303)
 
     else:
         return templates.TemplateResponse(
@@ -53,12 +79,29 @@ async def process_create_task(
 @router.get("", response_class=HTMLResponse)
 async def show_all_tasks(
     request: Request,
-    user=Depends(check_auth),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
+    user: User = Depends(check_auth),  # noqa B008
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse:
     """
     Обрабатывает запрос на просмотр задач пользователя с параметрами
     сортировки, фильтрации и поиска.
+
+    Получает значения из URL-параметров:
+    - sorted: порядок сортировки ('up', 'down', 'name', 'completed').
+    - filter: фильтрация по статусу выполнения
+        ('all', 'completed', 'uncompleted').
+    - search: поисковый запрос по названию задачи.
+
+    В зависимости от выбранных значений подставляет соответствующие
+    SQL-параметры и возвращает HTML-страницу с отфильтрованными задачами.
+
+    Args:
+        request (Request): объект запроса FastAPI.
+        user (User): объект текущего пользователя.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse: страница с задачами пользователя.
     """
     params = request.query_params
 
@@ -67,12 +110,11 @@ async def show_all_tasks(
         settings.tasks.SORTED.name, settings.tasks.SORTED.default_html
     )
     assert isinstance(sort_option, str)
-    #  Подставляем соответствующее SQL-значение (напр., "created_at DESC")
+    #  Подставляем соответствующее SQL-значение (напр., "created_at")
     assert isinstance(settings.tasks.SORTED.db_map, dict)
     sorted_for_db = settings.tasks.SORTED.db_map.get(
         sort_option, settings.tasks.SORTED.default_db
     )
-    # assert isinstance(sorted_for_db, str)
 
     # Получаем параметр фильтрации завершенности (напр., "completed")
     filter_option = params.get(
@@ -118,13 +160,28 @@ async def show_all_tasks(
 async def show_task_id_form(
     task_id: int,
     request: Request,
-    user=Depends(check_auth),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    """Отображает страницу задачу по ID."""
+    user: User = Depends(check_auth),  # noqa B008
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse:
+    """
+    Отображает страницу задачу по ID.
+
+    Args:
+        task_id (int): ID задачи.
+        request (Request): объект запроса FastAPI.
+        user (User): объект текущего пользователя.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse: страница с задачами пользователя.
+    """
     form = ChangeTaskForm()
     edit_mode = False
-    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    task = await tsk.get_task_by_id(
+        id_users=user.id,
+        task_id=task_id,
+        session=session,
+    )
 
     return templates.TemplateResponse(
         name="task_id.html",
@@ -141,15 +198,36 @@ async def show_task_id_form(
 async def show_task_id_change(
     task_id: int,
     request: Request,
-    user=Depends(check_auth),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    """Отображает страницу задачу по ID."""
+    user: User = Depends(check_auth),  # noqa B008
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse:
+    """
+    Обрабатывает данные формы для задачи.
+    - Если нажата кнопка "Изменить задачу", активируется режим редактирования.
+    - Если нажата кнопка "Сохранить изменения", обновляются описание и
+        статус выполнения:
+        - describe (str): новое описание задачи (через форму).
+        - completed (str): статус выполнения ('True' или 'False').
+
+    Args:
+        task_id (int): ID задачи.
+        request (Request): объект запроса FastAPI.
+        user (User): объект текущего пользователя.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse: HTML-страница с задачей (в режиме просмотра
+            или редактирования).
+    """
     form_data = await request.form()
     form = ChangeTaskForm(form_data)
     edit_mode = False
 
-    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    task = await tsk.get_task_by_id(
+        id_users=user.id,
+        task_id=task_id,
+        session=session,
+    )
     if task is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -206,10 +284,30 @@ async def show_task_id_change(
 async def before_delete_task_by_id(
     task_id: int,
     request: Request,
-    user=Depends(check_auth),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
-    task = await tsk.get_task_by_id(id_users=user.id, task_id=task_id, session=session)
+    user: User = Depends(check_auth),  # noqa B008
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse:
+    """
+    Отображает страницу с подтверждением удаления задачи по ееID.
+    Если задача существует, устанавливает Cookie 'allow_delete' с ее ID.
+    Если задача не найдена, возвращает страницу ошибки (404).
+
+    Args:
+        task_id (int): ID задачи.
+        request (Request): объект запроса FastAPI.
+        user (User): объект текущего пользователя.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse:
+            - страница подтверждения удаления с установленным Cookie.
+            - страница ошибки, если задача не найдена.
+    """
+    task = await tsk.get_task_by_id(
+        id_users=user.id,
+        task_id=task_id,
+        session=session,
+    )
     if task is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -223,7 +321,11 @@ async def before_delete_task_by_id(
             "task": task,
         },
     )
-    template_response.set_cookie(key="allow_delete", value=str(task_id), httponly=True)
+    template_response.set_cookie(
+        key="allow_delete",
+        value=str(task_id),
+        httponly=True,
+    )
     return template_response
 
 
@@ -231,11 +333,30 @@ async def before_delete_task_by_id(
 async def delete_task_by_id_form(
     task_id: int,
     request: Request,
-    allow_delete=Cookie(default=None),
-    user=Depends(check_auth),
-    session: AsyncSession = Depends(db_helper.session_getter),
-):
+    allow_delete: str | None = Cookie(default=None),  # noqa B008
+    user: User = Depends(check_auth),  # noqa B008
+    session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
+) -> HTMLResponse | RedirectResponse:
+    """
+    Удаляет задачу по ее ID, если предварительно было подтверждено удаление.
 
+    Для подтверждения используется Cookie 'allow_delete', значение которого
+    должно совпадать с ID задачи. Если Cookie отсутствует или не совпадает,
+    возвращается страница ошибки (403). После выполнения операции
+    (успешной или нет) Cookie 'allow_delete' удаляется.
+
+    Args:
+        task_id (int): ID задачи.
+        request (Request): объект запроса FastAPI.
+        allow_delete (str | None): Cookie, подтверждающий удаление задачи.
+        user (User): объект текущего пользователя.
+        session (AsyncSession): асинхронная сессия SQLAlchemy.
+
+    Returns:
+        HTMLResponse | RedirectResponse:
+            - RedirectResponse — редирект на страницу со всем задачами.
+            - HTMLResponse — страница ошибки, если удаление не подтверждено.
+    """
     if allow_delete != str(task_id):
         template_response = templates.TemplateResponse(
             name="mistakes.html",
@@ -264,10 +385,29 @@ async def delete_task_by_id_form(
 async def cancel_delete_task_by_id(
     task_id: int,
     request: Request,
-    allow_delete=Cookie(default=None),
-    user=Depends(check_auth),
-):
+    allow_delete: str | None = Cookie(default=None),  # noqa B008
+    user: User = Depends(check_auth),  # noqa B008
+) -> HTMLResponse | RedirectResponse:
+    """
+    Отменяет удаление задачи по ее ID.
 
+    Для отмены используется Cookie 'allow_delete', значение которого должно
+    совпадать с ID задачи. Если Cookie отсутствует или не совпадает,
+    возвращается страница ошибки (403). После выполнения операции
+    Cookie 'allow_delete' удаляется.
+
+    Args:
+        task_id (int): ID задачи.
+        request (Request): объект запроса FastAPI.
+        allow_delete (str | None):  Cookie, подтверждающий удаление задачи.
+        user (User): объект текущего пользователя.
+
+    Returns:
+        HTMLResponse | RedirectResponse:
+            - RedirectResponse — перенаправление на страницу задачи после
+                успешной отмены.
+            - HTMLResponse — страница ошибки, если удаление не подтверждено.
+    """
     if allow_delete != str(task_id):
         template_response = templates.TemplateResponse(
             name="mistakes.html",

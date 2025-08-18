@@ -150,7 +150,7 @@ async def process_login(
 
 @router.get("/logout", response_class=HTMLResponse)
 async def logout_user(
-    user: User | None = Depends(check_auth),  # noqa B008
+    user: User = Depends(check_auth),  # noqa B008
 ) -> RedirectResponse:
     """
     Выполняет выход пользователя из системы.
@@ -158,7 +158,7 @@ async def logout_user(
     - Перенаправляет на страницу авторизации.
 
     Args:
-        user (User | None): объект текущего пользователя.
+        user (User): объект текущего пользователя.
 
     Returns:
         RedirectResponse: редирект на страницу авторизации.
@@ -171,14 +171,14 @@ async def logout_user(
 @router.get("/users/home", response_class=HTMLResponse)
 async def user_page(
     request: Request,
-    user: User | None = Depends(check_auth),  # noqa B008
+    user: User = Depends(check_auth),  # noqa B008
 ) -> HTMLResponse:
     """
     Отображает личную страницу пользователя (home page).
 
     Args:
         request (Request): объект запроса FastAPI.
-        user (User | None): объект текущего пользователя.
+        user (User): объект текущего пользователя.
 
     Returns:
         HTMLResponse: HTML-страница пользователя.
