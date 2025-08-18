@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from api.utils import check_auth
 from core.config import settings
 from core.models import User, db_helper
 from core.schemas.users import LoginForm, RegistrationForm, UserCreate
 from crud.user import check_name_exists, create_user
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from security.utils import create_jwt_token, get_password_hash, verify_password
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["Users"])
 templates = settings.templates

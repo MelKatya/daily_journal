@@ -1,12 +1,11 @@
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from api.utils import check_auth
 from core.config import settings
 from core.models import Task, User, db_helper
 from core.schemas.tasks import ChangeTaskForm, CreateTaskForm, TaskCreate
 from crud import task as tsk
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, status
+from fastapi.responses import HTMLResponse, RedirectResponse
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
 templates = settings.templates

@@ -3,14 +3,13 @@ from pathlib import Path
 from typing import AsyncGenerator
 
 import uvicorn
+from api import router as api_router
+from core.config import settings
+from core.models import db_helper
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-from api import router as api_router
-from core.config import settings
-from core.models import db_helper
 
 
 @asynccontextmanager

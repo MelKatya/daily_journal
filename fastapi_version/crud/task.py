@@ -1,10 +1,9 @@
 import datetime
 
-from sqlalchemy import delete, select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.models import Task
 from core.schemas.tasks import TaskCreate
+from sqlalchemy import delete, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def create_task(task: TaskCreate, session: AsyncSession) -> Task:

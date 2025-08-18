@@ -1,9 +1,8 @@
-from fastapi import Cookie, Depends, HTTPException, Request
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from core.models import User, db_helper
 from crud.user import get_user_by_id
+from fastapi import Cookie, Depends, HTTPException, Request
 from security.utils import get_user_id_from_token
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def check_auth(
