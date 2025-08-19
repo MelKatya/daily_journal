@@ -1,5 +1,3 @@
-from typing import Union
-
 from api.utils import check_auth
 from core.config import settings
 from core.models import Task, User, db_helper
