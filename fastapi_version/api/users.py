@@ -26,7 +26,11 @@ async def show_registration_form(request: Request) -> HTMLResponse:
     )
 
 
-@router.post("/registration", response_class=HTMLResponse)
+@router.post(
+    "/registration",
+    response_class=HTMLResponse,
+    response_model=None,
+)
 async def process_registration(
     request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
@@ -70,7 +74,11 @@ async def process_registration(
         )
 
 
-@router.get("/login", response_class=HTMLResponse)
+@router.get(
+    "/login",
+    response_class=HTMLResponse,
+    response_model=None,
+)
 async def show_login_form(
     request: Request,
     token: str | None = Cookie(default=None),  # noqa B008
@@ -99,7 +107,11 @@ async def show_login_form(
     )
 
 
-@router.post("/login", response_class=HTMLResponse)
+@router.post(
+    "/login",
+    response_class=HTMLResponse,
+    response_model=None,
+)
 async def process_login(
     request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008

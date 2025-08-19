@@ -1,11 +1,14 @@
+from typing import Union
+
 from api.utils import check_auth
 from core.config import settings
 from core.models import Task, User, db_helper
 from core.schemas.tasks import ChangeTaskForm, CreateTaskForm, TaskCreate
 from crud import task as tsk
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import RedirectResponse
 
 router = APIRouter(tags=["Tasks"], prefix="/tasks")
 templates = settings.templates
@@ -33,7 +36,7 @@ async def show_create_task_form(
     )
 
 
-@router.post("/create", response_class=HTMLResponse)
+@router.post("/create", response_class=HTMLResponse, response_model=None)
 async def process_create_task(
     request: Request,
     session: AsyncSession = Depends(db_helper.session_getter),  # noqa B008
@@ -328,7 +331,11 @@ async def before_delete_task_by_id(
     return template_response
 
 
-@router.get("/{task_id}/delete", response_class=HTMLResponse)
+@router.get(
+    "/{task_id}/delete",
+    response_class=HTMLResponse,
+    response_model=None,
+)
 async def delete_task_by_id_form(
     task_id: int,
     request: Request,
@@ -380,7 +387,11 @@ async def delete_task_by_id_form(
     return response
 
 
-@router.get("/{task_id}/cancel_delete", response_class=HTMLResponse)
+@router.get(
+    "/{task_id}/cancel_delete",
+    response_class=HTMLResponse,
+    response_model=None,
+)
 async def cancel_delete_task_by_id(
     task_id: int,
     request: Request,
